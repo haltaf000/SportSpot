@@ -11,3 +11,13 @@
   <li>Admin users can create and manage models. The admin has been optimised.</li>
   <li>Also, admin have the ability to remove users.</li>
 </ul>
+
+<h2>Things to be done!</h2>
+<p>There are all of things to be changed and upgraded before becoming fully usefull.</p>
+<p>Some of those things are:</p>
+<ul>
+  <li>Fix or hire someone to improve UI.</li>
+  <li>Add paywall for many individual tournaments and season long passes.</li>
+  <li>Work on individual stats page, game score page, and tournament page.</li>
+</ul>
+
