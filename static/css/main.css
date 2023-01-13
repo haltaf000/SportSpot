@@ -79,10 +79,13 @@ h6{
     background-color: #00ff0d;
 }
 
-.btn--secondary {
+.btn--grey {
     background-color: grey;
 }
 
+.btn--danger {
+    background-color: rgb(219, 114, 114);
+}
 
 .error{
     color: #E55D42;
