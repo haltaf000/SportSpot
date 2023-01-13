@@ -2,7 +2,7 @@
 <p>Sports management web-application written Django</p>
 <p>Active users predicted to be around 300 in NYC area.</p>
 
-<h3>Overview</h3>
+<h2>Overview</h2>
 <p>The application creates an online catalog of cricket events in NYC metropolitan area, where users can browse different events and sign up to particpate.</p>
 <p>Main features that have been implemented are:</p>
 <ul>
