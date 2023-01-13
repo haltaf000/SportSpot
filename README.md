@@ -13,11 +13,11 @@
 </ul>
 
 <h2>Things to be done!</h2>
-<p>There are all of things to be changed and upgraded before becoming fully usefull.</p>
+<p>There are allot of things to be changed and upgraded before becoming fully usefull.</p>
 <p>Some of those things are:</p>
 <ul>
-  <li>Fix or hire someone to improve UI.</li>
-  <li>Add paywall for many individual tournaments and season long passes.</li>
-  <li>Work on individual stats page, game score page, and tournament page.</li>
+  <li>Fix myself or hire someone to improve UI.</li>
+  <li>Add paywall for individual tournaments and season long passes.</li>
+  <li>Work on user stats page, game score page, and tournament page.</li>
 </ul>
 
