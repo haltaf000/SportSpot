@@ -5,6 +5,9 @@
         <h1>My Account</h1>
         <h3>{{user.name}}</h3>
         <p>{{user.bio}}</p>
+
+        <a class="btn btn--warning" href="{%url 'edit'%}">Edit</a>
+        <a class="btn btn--warning">Reset Password</a>
     </section>
 
     <section>
@@ -12,6 +15,8 @@
             <h3>My Events</h3>
             {% for event in user.events.all %}
                 <a href="{% url 'event' event.id %}">{{event.name}},</a>
+            {% empty %}
+            <p>You have not registered for any events.</p>    
             {% endfor %}
         </div>
     </section>
@@ -21,6 +26,8 @@
             <h3>My Submissions</h3>
             {% for sub in user.submissions.all %}
                 <a href="{% url 'update_submission' sub.id %}">{{sub.event.name}}</a>
+            {% empty %}
+            <p>You do not have any submissions for any events.</p>
             {% endfor %}
         </div>
     </section>

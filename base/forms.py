@@ -9,7 +9,17 @@ class SubmissionForm(ModelForm):
         fields = ['details']
         
         
+class UserForm(ModelForm):
+    class Meta:
+        model = User
+        fields = ['name', 'email', 'bio']   
         
+        widgets = {
+            'name':forms.TextInput(attrs={'class':'form-field--input'}),
+            'email':forms.EmailInput(attrs={'class':'form-field--input'}),
+            'bio':forms.Textarea(attrs={'class':'form-field--input-txarea'})
+        }
+             
 class CustomUserCreateForm(UserCreationForm):
     class Meta:
         model = User
