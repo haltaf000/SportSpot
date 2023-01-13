@@ -6,8 +6,10 @@
         <h3>{{user.name}}</h3>
         <p>{{user.bio}}</p>
 
-        <a class="btn btn--warning" href="{%url 'edit'%}">Edit</a>
-        <a class="btn btn--warning">Reset Password</a>
+        <div id="account--buttons">
+            <a class="btn btn--warning" href="{%url 'edit'%}">Edit</a>
+            <a class="btn btn--warning">Reset Password</a>
+        </div>
     </section>
 
     <section>
