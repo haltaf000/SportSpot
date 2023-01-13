@@ -23,7 +23,9 @@ class Event(models.Model):
     start_date = models.DateTimeField(null=True)
     end_date = models.DateTimeField(null=True)
     registration_deadline = models.DateTimeField(null=True)
-  
+    nothing = models.TextField(null=True, blank=True)
+
+    
     def __str__(self): 
         return self.name
     
