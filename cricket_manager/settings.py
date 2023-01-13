@@ -33,7 +33,10 @@ DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['web-production-c5da.up.railway.app', '127.0.0.1']
+
+CSRF_TRUSTED_ORIGINS = ['https://web-production-c5da.up.railway.app']
+
 
 AUTH_USER_MODEL = 'base.User'
 # Application definition
