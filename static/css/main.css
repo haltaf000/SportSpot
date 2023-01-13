@@ -79,6 +79,10 @@ h6{
     background-color: #00ff0d;
 }
 
+.btn--secondary {
+    background-color: grey;
+}
+
 
 .error{
     color: #E55D42;
