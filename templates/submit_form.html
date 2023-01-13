@@ -1,0 +1,15 @@
+{% extends 'main.html' %}
+
+{% block content %}
+    <h2>Submit for {{event.name}}</h2>
+
+    <div>
+        <form method="POST">
+            {% csrf_token %}
+            {{form.as_p}}
+            <input type="submit" value="Submit"/>
+
+        </form>
+    </div>
+
+{% endblock content%}

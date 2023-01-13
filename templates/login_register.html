@@ -1,0 +1,53 @@
+{% extends 'main.html' %}
+
+{% block content %}
+    {% if page == 'register' %}
+    <section>
+        <div>
+            <h4>Create an Account</h4>
+
+            <form method="POST" action="{% url 'register' %}">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="form-field--wrapper" >
+                        <label>{{field.label}}</label>
+                        {{field}}
+                        <div>
+                            {% for error in field.errors %}
+                            <p class="error">{{error}}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </form>
+            <p>Already have an account? <strong><a href="{% url 'login' %}">Login</a></strong></p>
+
+        </div>
+    </section>
+    {% else %}
+    <section>
+        <div>
+            <h4>Login User</h4>
+
+            <form method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div>
+                    <label>Email</label>
+                    <input type="email" name="email"/>
+                </div>
+
+                <div>
+                    <label>Password</label>
+                    <input type="password" name="password"/>
+                </div>
+
+                <div>
+                    <input type="submit" value="Login"/>
+                </div>
+
+                <p>Do not have an account? <strong><a href="{% url 'register' %}">Register</a></strong></p>
+            </form>
+        </div>
+    </section>
+    {% endif %}
+{% endblock content%}

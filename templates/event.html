@@ -1,0 +1,70 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+<link rel='stylesheet' type='text/css' media='screen' href='{% static "css/event.css" %}'>
+
+    <section>
+    <div>
+        <h3>{{event.name}}</h3>
+    </div>
+    <br>
+
+    <div>
+        <p>{{event.preview}}</p>
+    </div>
+    <br>
+    <div>
+        <h6>Important Dates</h6>
+        <p><strong>Start Date:</strong>  {{event.start_date|date:"m.d.Y"}}</p>
+        <p><strong>End Date:</strong>  {{event.end_date|date:"m.d.Y"}}</p>
+        <p><strong>Registration Deadline:</strong>  {{event.registration_deadline|date:"m.d.Y"}}</p>
+    </div>
+    <br>
+    <div>
+        <h6>Description</h6>
+        <p>{{event.description}}</p>
+    </div>
+    <br>
+    <div>
+        <h6>Format:</h6>
+        <p>{{event.format}}</p>
+    </div>
+    <br>
+    <div>
+        <h6>Number of Players:</h6>
+        <p>{{ event.players }}</p>
+    </div>
+    <br>
+    <div>
+        <h6>Prizes:</h6>
+        <p>{{ event.prizes }}</p>
+    </div>
+
+    <br>
+
+    <div>
+    {% if registered %}
+        <p>You have already registered for this event. See you on the field!</p>
+    {% else %}
+        <a href="{% url 'confirmation' event.id %}">Register</a>
+    {% endif %}
+    
+    {% if submitted %}
+        <p>You have already submitted for this event. See you on the field!</p>
+    {% else %}
+        <a href="{% url 'project_submission' event.id %}">Submit</a>
+    {% endif %} 
+    </div>
+    </section>
+
+    <section>
+        <h5>Event Participants: {{event.participants.all.count}}</h5>
+        {% for user in event.participants.all %}
+            <a href="{% url 'profile' user.id %}"><strong><div>{{user.name}}</div></strong></a>
+        {% endfor %}
+    </section>
+
+    </div>
+
+{% endblock content%}
