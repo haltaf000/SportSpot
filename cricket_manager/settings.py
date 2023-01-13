@@ -26,7 +26,6 @@ import os
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-&ll3f==(si#+e)004ku584_ex+lu9!*&_idf*gfa)vfw^d*aqh')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-#DEBUG = True
 
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
