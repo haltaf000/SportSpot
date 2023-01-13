@@ -18,6 +18,9 @@
                             {% endfor %}
                         </div>
                     </div>
+                    <div>
+                        <input type="submit" value="Register"/>
+                    </div>
                 {% endfor %}
             </form>
             <p>Already have an account? <strong><a href="{% url 'login' %}">Login</a></strong></p>
@@ -31,7 +34,6 @@
 
             <form method="POST" action="{% url 'login' %}">
                 {% csrf_token %}
-
                 <div>
                     <label>Email</label>
                     <input type="email" name="email"/>
