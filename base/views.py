@@ -51,7 +51,7 @@ def register_page(request):
 def logout_user(request):
     logout(request)
     messages.info(request, 'User was logged out!')
-    return redirect('login')
+    return redirect('home')
 
 def home(request):
     users = User.objects.filter(cricket_praticipant=True)
