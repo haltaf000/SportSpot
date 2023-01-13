@@ -1,5 +1,5 @@
 <h1>Cricket Manager</h1>
-<p>Sports management web-application written Django</p>
+<p>Sports management web-application written in Django</p>
 <p>Active users predicted to be around 300 in NYC area.</p>
 
 <h2>Overview</h2>
