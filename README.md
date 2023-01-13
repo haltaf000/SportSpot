@@ -19,5 +19,6 @@
   <li>Fix myself or hire someone to improve UI.</li>
   <li>Add paywall for individual tournaments and season long passes.</li>
   <li>Work on user stats page, game score page, and tournament page.</li>
+  <li>Create a contact page. Or. Design and implement a chat app!</li>
 </ul>
 
