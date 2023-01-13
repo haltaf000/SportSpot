@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 import time
 from datetime import datetime
+import uuid
 # Create your models here.
 
 class User(AbstractUser):
@@ -25,7 +26,6 @@ class Event(models.Model):
     end_date = models.DateTimeField(null=True)
     registration_deadline = models.DateTimeField(null=True)
     nothing = models.TextField(null=True, blank=True)
-
     
     def __str__(self): 
         return self.name
@@ -38,9 +38,6 @@ class Submission(models.Model):
     participant = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='submissions')
     event = models.ForeignKey(Event, on_delete=models.SET_NULL, null=True)
     details = models.TextField(null=True, blank=True)
-
     def __str__(self):
         return str(self.event) + ' --- ' + str(self.participant)
     
-    class Meta:
-        ordering = ['id']
