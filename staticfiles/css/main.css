@@ -1,0 +1,283 @@
+@import url('https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&display=swap');
+/* @import 'prismjs/themes/prism-okaidia'; */
+
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Readex Pro';
+    background-color: whitesmoke;
+    line-height: 1.5em;
+    color: #000;
+    font-size: 14px;
+ }
+
+ h1,h2,h3,h4,h5,h6{
+    font-weight: 500;
+}
+
+h1{
+   font-size: 48px;
+}
+
+h2{
+   font-size: 40px;
+}
+
+h3{
+    font-size: 36px;
+}
+
+h4{
+   font-size: 32px;
+}
+
+h5{
+   font-size: 28px;
+}
+
+h6{
+   font-size: 24px;
+}
+
+
+.text--success{
+    color: #198754;
+}
+ .section{
+     margin: 2em 0;
+ }
+
+.btn{
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    /* background-color: rgb(204, 204, 204); */
+    color: black;
+    display: block;
+    width: fit-content;
+    background-color: none;
+    border: none;
+}
+
+.btn--primary{
+    background-color:#000;
+    color: #fff;
+}
+
+.btn--secondary{
+    background-color:#fff;
+    color: #000;
+    border: 1px solid #DEE4ED;
+}
+
+.btn--warning{
+    background-color: #ffe900;
+}
+
+.btn--success{
+    background-color: #00ff0d;
+}
+
+
+.error{
+    color: #E55D42;
+}
+
+.success{
+    color: #31a62b;
+}
+
+.info{
+    color: #3aabd4;
+}
+
+.container--main{
+    width: 1200px;
+    margin: 0 auto;
+    padding:0 1em ;
+}
+
+
+
+
+/* NAVBAR STYLING */
+
+
+nav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0.5em 2em;
+}
+
+nav a{
+     text-decoration: none;
+     color: black;
+     margin: 0 10px;
+ }
+
+
+ #logo--text{
+     font-size: 26px;
+     font-weight: 500;
+ }
+
+ #nav--col3{
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+ }
+
+section {
+    margin: 10px 30px;
+}
+
+.rules {
+    margin: 10px 30px;
+}
+
+.rules p{
+    font-size: 15px;
+}
+
+.rules ul {
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+#intro--headline{
+    font-weight: 600;
+    font-size: 48px;
+    text-align: center;
+}
+
+#home__hero{
+    padding-top: 13em;
+    padding-bottom: 13em;
+}
+
+#hero__content{
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#intro--subheadline{
+    padding: 1em 6em;
+
+}
+
+.events--lists{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2em;
+}
+
+ .event__wrapper{
+    border: 1px solid #DEE4ED;
+    padding: 2em;
+    border-radius: 5px;
+ }
+
+ .event__preview--title{
+    font-size: 22px;
+    text-decoration: none;
+    color: #000;
+ }
+
+ .event--date{
+     color: #000;
+ }
+
+ .dot__wrapper{
+     display: flex;
+     align-items: center;
+ }
+
+ .dot__wrapper *{
+     margin-right: .5em;
+ }
+
+ .dot{
+     background-color: grey;
+     height: 15px;
+     width: 15px;
+     border-radius: 50%;
+ }
+
+ .dot--green{
+    background-color: #06D6A0;
+ }
+
+ .dot--red{
+    background-color: #F04438;
+ }
+
+ .event__preview__details * {
+     margin-right: 1em;
+ }
+
+ .event__preview__details{
+     display: flex;
+     justify-content: flex-start;
+     padding: 1.5em 0;
+ }
+
+ .event__preview__details__bottom{
+     display: flex;
+     padding: 1.5em 0;
+ }
+
+ .event__preview__details__bottom *{
+     margin-right: 1em;
+ }
+
+
+ .wrapper--user{
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+    padding: 1em;
+    border-radius: 5px;
+    text-align: center;
+    max-width: 100px;
+ }
+ 
+ .wrapper--user *{
+     margin-top: 1em;
+ }
+
+ 
+ .card {
+    /* Add shadows to create the "card" effect */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    padding: 15px 25px;
+    margin-top: 10px;
+    width: 100%;
+  }
+  
+  /* On mouse-over, add a deeper shadow */
+  .card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.4);
+  }
+  
+  .events--lists{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.footer {
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+  }
+
+.footer p{
+    margin-top: 10px;
+    padding: 10px;
+    color: rgb(0, 0, 0);
+}
