@@ -28,6 +28,7 @@
                                 <p><strong>End Date:</strong>  {{event.end_date|date:"m.d.Y"}}</p>
                                 <p><strong>Registration Deadline:</strong>  {{event.registration_deadline|date:"m.d.Y"}}</p>
                                 <p><strong>Participants:</strong> {{event.participants.all.count}}</p>
+                                <p><strong>Location:</strong>  {{event.location}}</p>
                                 <br>
                                 <a class="btn btn--primary" href="{% url 'event' event.id %}">Enter</a>
                             </div>
