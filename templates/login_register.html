@@ -7,14 +7,16 @@
                 <div class="login-register--container">
                     
                         <h4 class="form-field--title">Create an Account</h4>
-
+                        <br>
                         <div>
                             <form method="POST" action="{% url 'register' %}">
                                 {% csrf_token %}
                                 {{form.as_p}}
+                                <br>
                                 <input type="submit" value="Register"/>
                             </form>
                         </div>
+                        <br>
                         <p>Already have an account? <strong><a href="{% url 'login' %}">Login</a></strong></p>
 
                 </div>
@@ -24,23 +26,23 @@
     <section class="rules">
         <div>
             <h4>Login User</h4>
-
+            <br>
             <form method="POST" action="{% url 'login' %}">
                 {% csrf_token %}
                 <div>
                     <label>Email</label>
                     <input type="email" name="email"/>
                 </div>
-
+                <br>
                 <div>
                     <label>Password</label>
                     <input type="password" name="password"/>
                 </div>
-
+                <br>
                 <div>
                     <input type="submit" value="Login"/>
                 </div>
-
+                <br>
                 <p>Do not have an account? <strong><a href="{% url 'register' %}">Register</a></strong></p>
             </form>
         </div>
