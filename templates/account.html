@@ -1,7 +1,7 @@
 {% extends 'main.html' %}
 
 {% block content %}
-    <section>
+    <section class="rules">
         <h1>My Account</h1>
         <h3>{{user.name}}</h3>
         <p>{{user.bio}}</p>
@@ -12,7 +12,7 @@
         </div>
     </section>
 
-    <section>
+    <section class="rules">
         <div>
             <h3>My Events</h3>
             {% for event in user.events.all %}
@@ -21,9 +21,7 @@
             <p>You have not registered for any events.</p>    
             {% endfor %}
         </div>
-    </section>
-
-    <section>
+   <br>
         <div>
             <h3>My Submissions</h3>
             {% for sub in user.submissions.all %}
