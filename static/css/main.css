@@ -142,16 +142,22 @@ section {
 }
 
 .rules {
-    margin: 10px 30px;
+    padding: 25px 30px;
+    margin: 20px 225px;
+    border-radius: 20px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, .3);
 }
 
 .rules p{
-    font-size: 15px;
+    font-size: 16px;
+    margin-top: 10px;
+    
 }
 
-.rules ul {
-    margin-left: 20px;
-    margin-right: 20px;
+.rules li {
+    margin-top: 10px;
+    margin-left: 25px;
+    margin-right: 25px;
 }
 
 #intro--headline{
@@ -276,15 +282,17 @@ section {
     grid-template-columns: 1fr 1fr 1fr;
 }
 
-.footer {
+footer {
     left: 0;
     bottom: 0;
     width: 100%;
     text-align: center;
+    position: relative;
   }
 
-.footer p{
+footer p{
     margin-top: 10px;
     padding: 10px;
     color: rgb(0, 0, 0);
 }
+

@@ -1,22 +1,27 @@
 {% extends 'main.html' %}
 
-{% block content %}
-    {% if page == 'register' %}
-    <section>
-        <div>
-            <h4>Create an Account</h4>
+{% block content %}        
+            {% if page == 'register' %}
 
-            <form method="POST" action="{% url 'register' %}">
-                {% csrf_token %}
-                {{form.as_p}}
-                <input type="submit" value="Register"/>
-            </form>
-            <p>Already have an account? <strong><a href="{% url 'login' %}">Login</a></strong></p>
+        <section class="rules">
+                <div class="login-register--container">
+                    
+                        <h4 class="form-field--title">Create an Account</h4>
 
-        </div>
-    </section>
+                        <div>
+                            <form method="POST" action="{% url 'register' %}">
+                                {% csrf_token %}
+                                {{form.as_p}}
+                                <input type="submit" value="Register"/>
+                            </form>
+                        </div>
+                        <p>Already have an account? <strong><a href="{% url 'login' %}">Login</a></strong></p>
+
+                </div>
+        </section>
+        
     {% else %}
-    <section>
+    <section class="rules">
         <div>
             <h4>Login User</h4>
 
