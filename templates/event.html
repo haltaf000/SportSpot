@@ -1,4 +1,6 @@
 {% extends 'main.html' %}
+{% now format %}
+
 {% load static %}
 
 {% block content %}
@@ -13,11 +15,15 @@
     <div>        
         <h6>📅 Draft</h6>
 
-        {% if event.draft_date.date == date.today %}
-            <a href="{% url 'live_draft' event_id=event.id %}">Start Draft</a>
+        
+        
+        {% if event.draft_date == today %}        
+        <a href="{% url 'live_draft' event_id=event.id %}">Start Draft</a>
         {% else %}
-            Draft date: {{ event.draft_date }}
+        <p> Draft date: {{ event.draft_date }} </p>
         {% endif %}
+
+
 
     </div>
 

@@ -1,8 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 import time
-from datetime import datetime
-# Create your models here.
+from django.db import models
+import datetime # Create your models here.
 
 class User(AbstractUser):
     name = models.CharField(max_length=200, null=True)
@@ -25,7 +25,7 @@ class Event(models.Model):
     end_date = models.DateTimeField(null=True)
     registration_deadline = models.DateTimeField(null=True)
     location = models.TextField(null=True, blank=True)
-    draft_date = models.DateTimeField(null=True)
+    draft_date = models.DateField(null=True)
     
     
     def __str__(self): 
