@@ -1,0 +1,13 @@
+{% extends 'main.html' %}
+
+{% block content %}
+    <h1>{{ team.name }}</h1>
+    <p>Captain: {{ team.captain.username }}</p>
+    <p>Players:
+        {% for player in team.players.all %}
+            {{ player.username }},
+        {% endfor %}
+    </p>
+    <a href="{% url 'edit_team' team.id %}">Edit Team</a>
+    <a href="{% url 'delete_team' team.id %}">Delete Team</a>
+{% endblock %}

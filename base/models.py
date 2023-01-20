@@ -25,6 +25,8 @@ class Event(models.Model):
     end_date = models.DateTimeField(null=True)
     registration_deadline = models.DateTimeField(null=True)
     location = models.TextField(null=True, blank=True)
+    draft_date = models.DateTimeField(null=True)
+    
     
     def __str__(self): 
         return self.name
@@ -39,4 +41,12 @@ class Submission(models.Model):
     details = models.TextField(null=True, blank=True)
     def __str__(self):
         return str(self.event) + ' --- ' + str(self.participant)
+    
+    
+class Team(models.Model):
+    name = models.CharField(max_length=200)
+    description = models.TextField(blank=True, null=True)
+    players = models.ManyToManyField(User, related_name='teams')
+    captain = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='captain_of')
+
     

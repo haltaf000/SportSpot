@@ -4,11 +4,22 @@
 {% block content %}
 <link rel='stylesheet' type='text/css' media='screen' href='{% static "css/event.css" %}'>
 
-    <section>
+    <section class="rules">
     <div>
         <h3>{{event.name}}</h3>
     </div>
     <br>
+
+    <div>        
+        <h6>📅 Draft</h6>
+
+        {% if event.draft_date.date == date.today %}
+            <a href="{% url 'live_draft' event_id=event.id %}">Start Draft</a>
+        {% else %}
+            Draft date: {{ event.draft_date }}
+        {% endif %}
+
+    </div>
 
     <div>
         <p><strong>Location:</strong>{{event.location}}</p>
@@ -71,6 +82,8 @@
             <a href="{% url 'profile' user.id %}"><strong><div>{{user.name}}</div></strong></a>
         {% endfor %}
     </section>
+
+
 
     </div>
 

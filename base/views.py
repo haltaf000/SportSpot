@@ -1,12 +1,16 @@
 from django.shortcuts import render, redirect
-from .models import User, Event, Submission
-from .forms import SubmissionForm, CustomUserCreateForm, UserForm
+from .models import User, Event, Submission, Team
+from .forms import SubmissionForm, CustomUserCreateForm, UserForm, TeamForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
+from datetime import date
+
 # Create your views here.
+
 
 def about_page(request):
     return render(request, "about.html", {})
@@ -150,3 +154,66 @@ def update_submission(request, pk):
     context = {'form':form, 'event':event}
     return render(request, 'submit_form.html', context)
     
+
+
+
+def team_list(request):
+    teams = Team.objects.all()
+    context = {'teams': teams}
+    return render(request, 'team_list.html', context)
+
+def team_detail(request, team_id):
+    team = get_object_or_404(Team, id=team_id)
+    context = {'team': team}
+    return render(request, 'team_detail.html', context)
+
+
+@login_required
+def live_draft(request, event_id):
+    event = Event.objects.get(pk=event_id)
+    if event.draft_date.date() != date.today():
+        messages.error(request, 'Draft date is not today')
+        return redirect('home')
+    available_players = event.participants.filter(cricket_participant=True)
+    teams = Team.objects.filter(event=event)
+    
+
+    if request.method == 'POST':
+        if 'create_team' in request.POST:
+            form = TeamForm(request.POST)
+            if form.is_valid():
+                team = form.save(commit=False)
+                team.event = event
+                team.save()
+                messages.success(request, 'Team was created!')
+                return redirect('team_detail', team_id=team.id)
+            else:
+                messages.error(request, 'An error has occurred during team creation')
+        elif 'edit_team' in request.POST:
+            team_id = request.POST['edit_team']
+            team = get_object_or_404(Team, id=team_id)
+            form = TeamForm(request.POST, instance=team)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Team was updated!')
+                return redirect('team_detail', team_id=team_id)
+            else:
+                messages.error(request, 'An error has occurred during team update')
+        elif 'delete_team' in request.POST:
+            team_id = request.POST['delete_team']
+            team = get_object_or_404(Team, id=team_id)
+            team.delete()
+            messages.success(request, 'Team was deleted!')
+            return redirect('team_list')
+        elif 'player' in request.POST and 'team' in request.POST:
+            player = User.objects.get(pk=request.POST['player'])
+            team = Team.objects.get(pk=request.POST['team'])
+            if request.user == team.captain:
+                team.players.add(player)
+                team.save()
+                available_players = available_players.exclude(pk=player.pk)
+            else:
+                messages.error(request, 'You are not the captain of the selected team')
+
+    context = {'available_players': available_players, 'teams': teams}
+    return render(request, 'live_draft.html', context)
