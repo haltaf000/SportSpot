@@ -8,6 +8,8 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
+from dateutil.tz import gettz
+
 
 
 # Create your views here.
@@ -59,7 +61,7 @@ def logout_user(request):
     return redirect('home')
 
 def home(request):
-    users = User.objects.filter(cricket_praticipant=True)
+    users = User.objects.filter(cricket_participant=True)
     count = users.count()
     users = users[0:20]
     events = Event.objects.all()
@@ -90,17 +92,13 @@ def edit_account(request):
     context = {'user':user, 'form':form}
     return render(request, 'user_form.html', context)
 
-def event_page(request, pk):
-    event = Event.objects.get(id=pk)
-    
+def event_page(request, event_id):
+    event = Event.objects.get(id=event_id)
     registered = False
     submitted = False
-    
     if request.user.is_authenticated:
-        
         registered = request.user.events.filter(id=event.id).exists()
         submitted = Submission.objects.filter(participant=request.user, event=event).exists()
-    
     context = {'event':event, 'registered':registered, 'submitted':submitted}
     return render(request, 'event.html', context)
 
@@ -172,51 +170,37 @@ def team_detail(request, team_id):
 from datetime import  datetime
 
 
-@login_required
+@login_required(login_url='/login')
 def live_draft(request, event_id):
     event = Event.objects.get(pk=event_id)
-    today = timezone.now().date()
-    if event.draft_date != today:
-        return render(request, 'draft_date.html', {'event': event, 'today':today})
-    else:
-        available_players = User.objects.filter(cricket_praticipant=True).exclude(id__in=event.teams.values_list('players'))
-        teams = Team.objects.filter(event=event)
-        if request.method == 'POST':
-            if 'create_team' in request.POST:
-                form = TeamForm(request.POST)
-                if form.is_valid():
-                    team = form.save(commit=False)
-                    team.event = event
-                    team.save()
-                    messages.success(request, 'Team was created!')
-                    return redirect('team_detail', team_id=team.id)
-                else:
-                    messages.error(request, 'An error has occurred during team creation')
-            elif 'edit_team' in request.POST:
-                team_id = request.POST['edit_team']
-                team = get_object_or_404(Team, id=team_id)
-                form = TeamForm(request.POST, instance=team)
-                if form.is_valid():
-                    form.save()
-                    messages.success(request, 'Team was updated!')
-                    return redirect('team_detail', team_id=team_id)
-                else:
-                    messages.error(request, 'An error has occurred during team update')
-            elif 'delete_team' in request.POST:
-                team_id = request.POST['delete_team']
-                team = get_object_or_404(Team, id=team_id)
-                team.delete()
-                messages.success(request, 'Team was deleted!')
-                return redirect('team_list')
-            elif 'player' in request.POST and 'team' in request.POST:
-                player = User.objects.get(pk=request.POST['player'])
-                team = Team.objects.get(pk=request.POST['team'])
-                if request.user == team.captain:
-                    team.players.add(player)
-                    team.save()
-                    available_players = available_players.exclude(pk=player.pk)
-                else:
-                    messages.error(request, 'You are not the captain of the selected team')
+    today_local = timezone.now()
+    if event.draft_date.date() != today_local.date() or event.draft_date > today_local:
+        messages.error(request, 'The draft is not currently in progress.')
+        return redirect('event', event_id=event_id)
 
-        context = {'available_players': available_players, 'teams': teams, 'today':today}
+    current_team = None
+    is_captain = False
+    available_players = User.objects.filter(cricket_participant=True)
+    teams = Team.objects.filter(event=event)
+    if request.user.is_authenticated:
+        try:
+            current_team = teams.get(captain=request.user)
+            is_captain = True
+        except Team.DoesNotExist:
+            pass
+        if is_captain:
+            available_players = available_players.exclude(id__in=teams.values_list('players'))
+            if request.method == 'POST':
+                if 'player' in request.POST and current_team.turn == event.current_turn:
+                    player = User.objects.get(pk=request.POST['player'])
+                    current_team.players.add(player)
+                    current_team.save()
+                    event.current_turn += 1
+                    event.save()
+                    available_players = available_players.exclude(teams__players=player)
+                    messages.success(request, 'Player has been added to your team.')
+                    return redirect('event', event_id=event_id)
+                else:
+                    messages.error(request, 'It is not your turn to pick or an error occurred.')
+        context = {'event': event, 'current_team': current_team, 'is_captain': is_captain, 'available_players': available_players, 'teams': teams, 'today_local':today_local}
         return render(request, 'live_draft.html', context)

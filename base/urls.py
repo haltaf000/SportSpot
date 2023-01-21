@@ -11,12 +11,13 @@ urlpatterns = [
     path('user/<str:pk>/', views.user_page, name='profile'),
     path('account/', views.account_page, name='account'),
     path('edit_account/', views.edit_account, name='edit'),
-    path('event/<str:pk>/', views.event_page, name='event'),
+    path('event/<int:event_id>/', views.event_page, name='event'),
     path('confirmation/<str:pk>/', views.registration_conformation, name='confirmation'),
     path('project/<str:pk>/', views.project_submission, name='project_submission'),
     path('update/<str:pk>/', views.update_submission, name="update_submission"),
     path('teams/', views.team_list, name='team_list'),
     path('team/<int:team_id>', views.team_detail, name='team_detail'),
-    path('event/<int:event_id>/live_draft', views.live_draft, name='live_draft')
+    path('event/<int:event_id>/live_draft/', views.live_draft, name='live_draft'),
+
 
 ]

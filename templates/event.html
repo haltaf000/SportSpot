@@ -1,6 +1,4 @@
 {% extends 'main.html' %}
-{% now format %}
-
 {% load static %}
 
 {% block content %}
@@ -14,18 +12,19 @@
 
     <div>        
         <h6>📅 Draft</h6>
-
-        
-        
-        {% if event.draft_date == today %}        
-        <a href="{% url 'live_draft' event_id=event.id %}">Start Draft</a>
+   
+        {% if event.draft_date.date == today_local.date and event.status == "draft_in_progress" %}
+            <a href="{% url 'live_draft' event_id=event.id %}">Start Draft</a>
         {% else %}
-        <p> Draft date: {{ event.draft_date }} </p>
+            <p>{{event.draft_date|date:"m.d.Y"}}</p>
         {% endif %}
 
 
+        <a href="{% url 'live_draft' event_id=event.id %}">Start Draft</a>
+
 
     </div>
+
 
     <div>
         <p><strong>Location:</strong>{{event.location}}</p>
