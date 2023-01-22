@@ -204,3 +204,24 @@ def live_draft(request, event_id):
                     messages.error(request, 'It is not your turn to pick or an error occurred.')
         context = {'event': event, 'current_team': current_team, 'is_captain': is_captain, 'available_players': available_players, 'teams': teams, 'today_local':today_local}
         return render(request, 'live_draft.html', context)
+
+
+from django.contrib.auth.decorators import user_passes_test
+
+def is_admin(user):
+    return user.is_admin
+
+@user_passes_test(is_admin, login_url='/login')
+def start_draft(request, event_id):
+    event = Event.objects.get(pk=str(event_id))
+    event.draft_in_progress = True
+    event.save()
+    messages.success(request, 'Draft has been started.')
+    return redirect('event', event_id=event_id)
+
+@user_passes_test(is_admin, login_url='/login')
+def manage_teams(request, event_id):
+    event = Event.objects.get(pk=str(event_id))
+    teams = Team.objects.filter(event=event)
+    context = {'event': event, 'teams': teams}
+    return render(request, 'manage_teams.html', context)

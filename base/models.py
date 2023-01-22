@@ -24,6 +24,7 @@ class Event(models.Model):
     registration_deadline = models.DateTimeField(null=True)
     location = models.TextField(null=True, blank=True)
     draft_date = models.DateTimeField(null=True)
+    admin = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='admin_of')
     
     
     def __str__(self): 
