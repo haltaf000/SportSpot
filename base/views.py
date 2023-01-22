@@ -61,10 +61,8 @@ def logout_user(request):
 
 def home(request):
     users = User.objects.filter(cricket_participant=True)
-    count = users.count()
-    users = users[0:20]
     events = Event.objects.all()
-    context = {'users':users, 'events': events, 'count':count}
+    context = {'users':users, 'events': events}
     return render(request, 'home.html', context)
 
 def user_page(request, pk):
