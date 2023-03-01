@@ -10,10 +10,11 @@
   <li>Users can view the game events and its details.</li>
   <li>Admin users can create and manage models. The admin has been optimised.</li>
   <li>Also, admin have the ability to remove users.</li>
+  <li>Live Draft session has now been added. Site admin assigns moderator to oversee draft and tournament.</li> 
 </ul>
 
 <h2>Things to be done!</h2>
-<p>There are allot of things to be changed and upgraded before becoming fully usefull.</p>
+<p>There are a lot of things to be changed and upgraded before becoming fully usefull.</p>
 <p>Some of those things are:</p>
 <ul>
   <li>Fix myself or hire someone to improve UI.</li>
