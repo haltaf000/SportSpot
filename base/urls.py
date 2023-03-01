@@ -18,6 +18,8 @@ urlpatterns = [
     path('teams/', views.team_list, name='team_list'),
     path('team/<int:team_id>', views.team_detail, name='team_detail'),
     path('event/<int:event_id>/live_draft/', views.live_draft, name='live_draft'),
+    path("events/<int:event_id>/manage_teams/", views.manage_teams, name="manage_teams"),
+
 
 
 ]

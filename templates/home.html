@@ -35,7 +35,7 @@
                                 <p><strong>Participants:</strong> {{event.participants.all.count}}</p>
                                 <p><strong>Location:</strong>  {{event.location}}</p>
                                 <br>
-                                <a class="btn btn--primary" href="{% url 'event' event.id %}">Enter</a>
+                                <a href="{% url 'event' event.pk %}">{{ event.name }}</a>
                             </div>
                         </div>
                     </div>

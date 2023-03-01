@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import User, Event, Submission, Team
-from .forms import SubmissionForm, CustomUserCreateForm, UserForm, TeamForm
+from .forms import SubmissionForm, CustomUserCreateForm, UserForm, TeamForm, AdminDraftControlForm 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
@@ -171,7 +171,7 @@ from datetime import  datetime
 def live_draft(request, event_id):
     event = Event.objects.get(pk=event_id)
     today_local = timezone.now()
-    if event.draft_date.date() != today_local.date() or event.draft_date > today_local:
+    if event.draft_start_date.date() != today_local.date() or event.draft_start_date > today_local:
         messages.error(request, 'The draft is not currently in progress.')
         return redirect('event', event_id=event_id)
 
@@ -185,22 +185,38 @@ def live_draft(request, event_id):
             is_captain = True
         except Team.DoesNotExist:
             pass
-        if is_captain:
-            available_players = available_players.exclude(id__in=teams.values_list('players'))
-            if request.method == 'POST':
-                if 'player' in request.POST and current_team.turn == event.current_turn:
-                    player = User.objects.get(pk=request.POST['player'])
-                    current_team.players.add(player)
-                    current_team.save()
-                    event.current_turn += 1
+
+    if request.user.is_staff:
+        if request.method == 'POST':
+            form = AdminDraftControlForm(request.POST)
+            if form.is_valid():
+                action = form.cleaned_data['action']
+                if action == 'start_draft':
+                    event.draft_start_date = timezone.now()
                     event.save()
-                    available_players = available_players.exclude(teams__players=player)
-                    messages.success(request, 'Player has been added to your team.')
-                    return redirect('event', event_id=event_id)
-                else:
-                    messages.error(request, 'It is not your turn to pick or an error occurred.')
-        context = {'event': event, 'current_team': current_team, 'is_captain': is_captain, 'available_players': available_players, 'teams': teams, 'today_local':today_local}
-        return render(request, 'live_draft.html', context)
+                elif action == 'end_draft':
+                    event.draft_end_date = timezone.now()
+                    event.save()
+                elif action == 'assign_captain':
+                    captain_id = form.cleaned_data['captain']
+                    captain = User.objects.get(id=captain_id)
+                    team = teams.get(id=form.cleaned_data['team'])
+                    team.captain = captain
+                    team.save()
+                return redirect('live_draft', event_id=event_id)
+        else:
+            form = AdminDraftControlForm(initial={'event': event})
+
+    context = {
+        'event': event,
+        'teams': teams,
+        'current_team': current_team,
+        'is_captain': is_captain,
+        'available_players': available_players,
+        'form': form if request.user.is_staff else None,
+    }
+    return render(request, 'live_draft.html', context)
+
 
 
 from django.contrib.auth.decorators import user_passes_test
@@ -218,7 +234,18 @@ def start_draft(request, event_id):
 
 @user_passes_test(is_admin, login_url='/login')
 def manage_teams(request, event_id):
-    event = Event.objects.get(pk=str(event_id))
+    event = Event.objects.get(id=event_id)
     teams = Team.objects.filter(event=event)
-    context = {'event': event, 'teams': teams}
-    return render(request, 'manage_teams.html', context)
+    if request.method == "POST":
+        if request.POST.get("start_draft"):
+            event.start_draft()
+        elif request.POST.get("end_draft"):
+            event.end_draft()
+        elif request.POST.get("add_team"):
+            team_name = request.POST.get("team_name")
+            team = Team.objects.create(event=event, name=team_name)
+        elif request.POST.get("delete_team"):
+            team_id = request.POST.get("team_id")
+            Team.objects.get(id=team_id).delete()
+        return redirect("manage_teams", event_id)
+    return render(request, "manage_teams.html", {"event": event, "teams": teams})

@@ -3,6 +3,25 @@
 <section class="rules">
   <h1>Live Draft</h1>
   <div>Event: {{ event.name }}</div>
+  <section>
+      {% if is_admin %}
+        <section class="admin-controls">
+          <h2>Admin Controls</h2>
+          {% if event.draft_in_progress %}
+            <form method="post" action="{% url 'stop_draft' event_id=event.id %}">
+              {% csrf_token %}
+              <input type="submit" value="Stop Draft">
+            </form>
+          {% else %}
+            <form method="post" action="{% url 'start_draft' event_id=event.id %}">
+              {% csrf_token %}
+              <input type="submit" value="Start Draft">
+            </form>
+          {% endif %}
+          <a href="{% url 'manage_teams' event_id=event.id %}">Manage Teams</a>
+        </section>
+      {% endif %}
+  </section>
   <div>Current Turn: {{ event.current_turn }}</div>
   <table>
     <thead>

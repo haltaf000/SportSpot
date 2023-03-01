@@ -2,6 +2,12 @@ from django.forms import ModelForm
 from .models import Submission, User, Event, Team
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from .models import DraftControl
+
+class AdminDraftControlForm(forms.ModelForm):
+    class Meta:
+        model = DraftControl
+        fields = ['draft_status']
 
 class TeamForm(forms.ModelForm):
     event = forms.ModelChoiceField(queryset=Event.objects.all())

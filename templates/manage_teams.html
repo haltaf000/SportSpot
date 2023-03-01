@@ -1,0 +1,37 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<h1>Manage Teams for {{ event.name }}</h1>
+<form method="post">
+    {% csrf_token %}
+    {% if event.is_draft_started %}
+        <input type="submit" value="End Draft" name="end_draft">
+    {% else %}
+        <input type="submit" value="Start Draft" name="start_draft">
+    {% endif %}
+</form>
+<h2>Teams</h2>
+<form method="post">
+    {% csrf_token %}
+    <input type="text" name="team_name">
+    <input type="submit" value="Add Team" name="add_team">
+</form>
+<table>
+    <tr>
+        <th>Team Name</th>
+        <th></th>
+    </tr>
+    {% for team in teams %}
+        <tr>
+            <td>{{ team.name }}</td>
+            <td>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" value="{{ team.id }}" name="team_id">
+                    <input type="submit" value="Delete" name="delete_team">
+                </form>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock %}

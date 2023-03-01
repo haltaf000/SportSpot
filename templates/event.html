@@ -12,15 +12,13 @@
 
     <div>        
         <h6>📅 Draft</h6>
-   
-        {% if event.draft_date.date == today_local.date and event.status == "draft_in_progress" %}
-            <a href="{% url 'live_draft' event_id=event.id %}">Start Draft</a>
-        {% else %}
-            <p>{{event.draft_date|date:"m.d.Y"}}</p>
-        {% endif %}
 
+            <p>{{event.draft_date|date:"m.d.Y"}}</p>
+       
 
         <a href="{% url 'live_draft' event_id=event.id %}">Start Draft</a>
+        <a href="{% url 'manage_teams' event_id=event.id %}">Manage Teams</a>
+        <a href="{% url 'live_draft' event_id=event.id %}">View Draft</a>
 
 
     </div>

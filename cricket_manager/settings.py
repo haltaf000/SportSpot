@@ -123,7 +123,7 @@ LANGUAGE_CODE = 'en-us'
 
 USE_I18N = True
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/New_York'
 USE_TZ = True
 
 
