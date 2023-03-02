@@ -1,9 +1,9 @@
-<h1>Cricket Manager</h1>
+<h1>SportSpot</h1>
 <p>Sports management web-application written in Django.</p>
 <p>Active users predicted to be around 300 in NYC area.</p>
 
 <h2>Overview</h2>
-<p>The application creates an online catalog of cricket events in NYC metropolitan area, where users can browse different events and sign up to particpate.</p>
+<p>The application creates an online catalog of sporting events in NYC metropolitan area, where users can browse different events and sign up to particpate.</p>
 <p>Main features that have been implemented are:</p>
 <ul>
   <li>There are models for games, users, and personal rating submission.</li>
