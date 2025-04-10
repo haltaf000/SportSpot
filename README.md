@@ -47,7 +47,7 @@ SportSpot creates an online catalog of sporting events, allowing users to explor
 - **Basic Styling**: Bootstrap-based (to be improved)
 
 ### Deployment:
-- **Cloud Hosting**: (e.g., Heroku/AWS—deployment details to be added)
+- **Cloud Hosting**: Render
 - **Version Control**: Git and GitHub
 
 ---
