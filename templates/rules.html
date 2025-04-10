@@ -1,58 +1,190 @@
 {% extends 'main.html' %}
 
 {% block content %}
-    <section class="rules">
-        <h1>Game Rules</h1>
-        <p>The rules are a bit different from the actual hardball game.</p>
-
-        <br>
-        <div>
-            <h3>Fielding Regulations</h3>
-            <ul>
-                <li><p>Depends on where we play and availability of space - not easy finding a ground in NYC dedicated for tape-ball cricket. BUT THAT IS ABOUT TO CHANGE!</p></li>
-                <li><p>During powerplay, only 3 allowed outside of circle.</p></li>
-            </ul>
+<!-- Hero Section -->
+<section class="hero-section d-flex align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h1 class="display-4 fw-bold mb-4">Game Regulations</h1>
+                <p class="lead mb-5">Modern guidelines for fair and competitive tape-ball cricket</p>
+            </div>
         </div>
+    </div>
+</section>
 
-        <br>
-        <div>
-            <h3>What counts as out!</h3>
-            <ol>
-                <li>Catch</li>
-                <li>Runout!</li>
-                <li>Hit Wicket</li>
-                <li>Obstructing the field</li>
-            </ol>
+<!-- Rules Content -->
+<section class="py-5 my-5">
+    <div class="container">
+        <div class="row g-5">
+            <!-- Fielding Regulations -->
+            <div class="col-md-6">
+                <div class="card feature-card h-100 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-diagram-3 fs-1 text-primary me-3"></i>
+                            <h2 class="h3 fw-bold mb-0">Fielding Rules</h2>
+                        </div>
+                        <p class="text-muted">Adapting to NYC's urban cricket landscape</p>
+                        <ul class="list-unstyled">
+                            <li class="d-flex mb-2">
+                                <i class="bi bi-arrow-right-short text-primary me-2"></i>
+                                <strong>Powerplay:</strong> Max 3 players outside circle
+                            </li>
+                            <li class="d-flex mb-2">
+                                <i class="bi bi-arrow-right-short text-primary me-2"></i>
+                                Boundary restrictions based on venue size
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dismissal Rules -->
+            <div class="col-md-6">
+                <div class="card feature-card h-100 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-x-octagon fs-1 text-primary me-3"></i>
+                            <h2 class="h3 fw-bold mb-0">Valid Dismissals</h2>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <div class="badge bg-primary-subtle text-primary">Caught</div>
+                            </div>
+                            <div class="col-6">
+                                <div class="badge bg-primary-subtle text-primary">Run Out</div>
+                            </div>
+                            <div class="col-6">
+                                <div class="badge bg-primary-subtle text-primary">Hit Wicket</div>
+                            </div>
+                            <div class="col-6">
+                                <div class="badge bg-primary-subtle text-primary">Obstruction</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Composition -->
+            <div class="col-md-6">
+                <div class="card feature-card h-100 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-people fs-1 text-primary me-3"></i>
+                            <h2 class="h3 fw-bold mb-0">Team Rules</h2>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="border p-2 text-center rounded">
+                                    <div class="text-primary fw-bold">12</div>
+                                    <small class="text-muted">Max Squad</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="border p-2 text-center rounded">
+                                    <div class="text-primary fw-bold">9</div>
+                                    <small class="text-muted">Field Players</small>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <ul class="list-unstyled text-muted">
+                                    <li class="mb-1">✓ 4 Batsmen minimum</li>
+                                    <li class="mb-1">✓ 3-4 Allrounders</li>
+                                    <li class="mb-1">✓ 1 Wicketkeeper</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Match Protocols -->
+            <div class="col-md-6">
+                <div class="card feature-card h-100 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-stopwatch fs-1 text-primary me-3"></i>
+                            <h2 class="h3 fw-bold mb-0">Match Protocols</h2>
+                        </div>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-icon bg-primary text-white">30'</div>
+                                <div class="timeline-content">
+                                    <strong>Player Arrival</strong>
+                                    <small class="text-muted">Before match start</small>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-icon bg-primary text-white">15'</div>
+                                <div class="timeline-content">
+                                    <strong>Final Team List</strong>
+                                    <small class="text-muted">Submission deadline</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Equipment Section -->
+            <div class="col-12">
+                <div class="card feature-card shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-gear fs-1 text-primary me-3"></i>
+                            <h2 class="h3 fw-bold mb-0">Equipment & Gear</h2>
+                        </div>
+                        <p class="text-muted mb-0">
+                            Provided: Bats, balls, stumps. Teams bring own protective gear.
+                            Color-coded jerseys provided for each tournament.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
+</section>
 
-        <br>
-         <div>
-            <h3>Team Selection</h3>
-            <ul>
-                <li>Maximum Players in a squad: 12</li>
-                <li>Total allowed to play a match: 9</li>
-                <li>Minimum number of players required to play a match: 7</li>
-                <li>Must pick at least 4 batsmen, 3-4 allrounders, 3-4 bowlers, and one wicket keeper.</li>
-                <li>During the match, all teams must have atleast 2 batsman, 2 allrounders, 2 bowlers, and one wicketkeeper.</li>
-            </ul>
-        </div>
+<style>
+    /* Rules Page Specific Styles */
+    .hero-section {
+        background: linear-gradient(rgba(255, 255, 255, 0.95),
+                url('https://source.unsplash.com/1600x900/?cricket-pitch') center/cover;
+                min-height: 50vh;
+        }
 
-        <br>
-        <div>
-            <h3>Punctuality</h3>
-            <p>Warning - all players must arrive <strong>30 minutes </strong> before start of play.</p>
-            <p>Final team for the match to be handed to umpires <strong>15 minutes</strong> before match start. No Excuses.</p>
-            <p>If team does not have minimum number of players required to play match, the team in question must pay fine in order to continue participating in tournament.</p>
-        </div>
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
 
-        <br>
-    
-        <div>
-            <h3>Equipment Allocation</h3>
-            <p>Excluding team jerseys, equipment to be provided to all teams!</p>
-            <p>All tournaments will be shirt color coded with each team.</p>
-        </div>
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
 
-    </section>
+        .timeline-icon {
+            position: absolute;
+            left: -40px;
+            top: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
 
-{% endblock content%}
+        .timeline-content {
+            border-left: 2px solid var(--primary-red);
+            padding-left: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        .badge.bg-primary-subtle {
+            background-color: rgba(230, 57, 70, 0.1) !important;
+        }
+</style>
+{% endblock %}

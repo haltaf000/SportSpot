@@ -1,16 +1,32 @@
-<nav>
-    <div id="logo--wrapper">
-        <a href="{% url 'home' %}"><h4 id="logo--text">NYC CRIC</h4></a>
-    </div>
-
-    <div id="nav--col3">
-            <a class="btn btn--secondary" href="{% url 'about' %}">About</a>
-            <a class="btn btn--warning" href="{% url 'rule' %}">Rules</a>
-            {% if request.user.is_authenticated %}
-            <a class="btn btn--danger" href="{% url 'account' %}">My Account</a>
-            <a class="btn btn--primary" href="{% url 'logout' %}">Logout</a>
-            {% else%}
-            <a class="btn btn--primary"  href="{% url 'login' %}">Login</a>
-            {% endif %}
+<nav class="navbar navbar-expand-lg py-3 custom-nav fixed-top">
+    <div class="container">
+        <a class="navbar-brand fw-bold fs-3" href="{% url 'home' %}">
+            <span class="text-primary">NYC</span><span class="text-secondary">TAPEBALL</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'about' %}">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'rule' %}">Rules</a>
+                </li>
+                {% if request.user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'account' %}">My Team</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Login</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
     </div>
 </nav>

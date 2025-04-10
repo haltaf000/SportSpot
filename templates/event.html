@@ -2,92 +2,101 @@
 {% load static %}
 
 {% block content %}
+<!-- Custom Styles -->
 <link rel='stylesheet' type='text/css' media='screen' href='{% static "css/event.css" %}'>
 
-    <section class="rules">
-    <div>
-        <h3>{{event.name}}</h3>
+<!-- Hero Section -->
+<section class="hero py-5" style="background: linear-gradient(135deg, #4e73df, #1c8cdc); color: #ffffff;">
+    <div class="container text-center">
+        <h1 class="display-4 fw-bold">{{ event.name }}</h1>
+        <p class="lead mb-5">{{ event.preview }}</p>
     </div>
-    <br>
+</section>
 
-    <div>        
-        <h6>📅 Draft</h6>
+<!-- Event Details -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <!-- Draft Section -->
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <h5 class="fw-bold text-dark">📅 Draft Date</h5>
+                <p class="text-muted">{{ event.draft_date|date:"m.d.Y" }}</p>
+                <div class="d-flex gap-3">
+                    <a href="{% url 'live_draft' event_id=event.id %}" class="btn btn-primary btn-lg">Start Draft</a>
+                    <a href="{% url 'manage_teams' event_id=event.id %}" class="btn btn-secondary btn-lg">Manage
+                        Teams</a>
+                    <a href="{% url 'live_draft' event_id=event.id %}" class="btn btn-info btn-lg">View Draft</a>
+                </div>
+            </div>
 
-            <p>{{event.draft_date|date:"m.d.Y"}}</p>
-       
+            <!-- Important Dates Section -->
+            <div class="col-md-6">
+                <h5 class="fw-bold text-dark">📅 Important Dates</h5>
+                <p><strong>Start Date:</strong> {{ event.start_date|date:"m.d.Y" }}</p>
+                <p><strong>End Date:</strong> {{ event.end_date|date:"m.d.Y" }}</p>
+                <p><strong>Registration Deadline:</strong> {{ event.registration_deadline|date:"m.d.Y" }}</p>
+            </div>
+        </div>
 
-        <a href="{% url 'live_draft' event_id=event.id %}">Start Draft</a>
-        <a href="{% url 'manage_teams' event_id=event.id %}">Manage Teams</a>
-        <a href="{% url 'live_draft' event_id=event.id %}">View Draft</a>
+        <!-- Event Description Section -->
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <h5 class="fw-bold text-dark">🖊️ Description</h5>
+                <p>{{ event.description }}</p>
+            </div>
 
+            <!-- Event Format Section -->
+            <div class="col-md-6">
+                <h5 class="fw-bold text-dark">🗄️ Format</h5>
+                <p>{{ event.format }}</p>
+            </div>
+        </div>
 
+        <!-- Event Participation Info -->
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <h5 class="fw-bold text-dark">🙃 Number of Players</h5>
+                <p>{{ event.players }}</p>
+            </div>
+
+            <div class="col-md-6">
+                <h5 class="fw-bold text-dark">🏆 Prizes</h5>
+                <p>{{ event.prizes }}</p>
+            </div>
+        </div>
+
+        <!-- Registration / Submission Section -->
+        <div class="row mb-5">
+            <div class="col-md-12 text-center">
+                {% if registered %}
+                <p class="text-success">You have already registered for this event. See you on the field!</p>
+                {% else %}
+                <a href="{% url 'confirmation' event.id %}" class="btn btn-success btn-lg">Register Now</a>
+                {% endif %}
+
+                {% if submitted %}
+                <p class="text-warning mt-2">You have already submitted for this event. See you on the field!</p>
+                {% else %}
+                <a href="{% url 'project_submission' event.id %}" class="btn btn-warning btn-lg mt-2">Submit Your
+                    Project</a>
+                {% endif %}
+            </div>
+        </div>
     </div>
+</section>
 
-
-    <div>
-        <p><strong>Location:</strong>{{event.location}}</p>
-        <br>
-        <p>{{event.preview}}</p>
+<!-- Participants List -->
+<section class="py-5">
+    <div class="container">
+        <h5 class="text-center mb-4">Event Participants ({{ event.participants.all.count }})</h5>
+        <div class="list-group">
+            {% for user in event.participants.all %}
+            <a href="{% url 'profile' user.id %}" class="list-group-item list-group-item-action">
+                <strong>{{ user.name }}</strong>
+            </a>
+            {% endfor %}
+        </div>
     </div>
-    <br>
-    <div>
-        <h6>📅 Important Dates</h6>
-        <br>
-        <p><strong>Start Date:</strong>  {{event.start_date|date:"m.d.Y"}}</p>
-        <p><strong>End Date:</strong>  {{event.end_date|date:"m.d.Y"}}</p>
-        <p><strong>Registration Deadline:</strong>  {{event.registration_deadline|date:"m.d.Y"}}</p>
-    </div>
-    <br>
-    <div>
-        <h6>🖊️ Description</h6>
-        <br>
-        <p>{{event.description}}</p>
-    </div>
-    <br>
-    <div>
-        <h6>🗄️Format:</h6>
-        <br>
-        <p>{{event.format}}</p>
-    </div>
-    <br>
-    <div>
-        <h6>🙃 Number of Players:</h6>
-        <br>
-        <p>{{ event.players }}</p>
-    </div>
-    <br>
-    <div>
-        <h6>🏆 Prizes:</h6>
-        <br>
-        <p>{{ event.prizes }}</p>
-    </div>
+</section>
 
-    <br>
-
-    <div>
-    {% if registered %}
-        <p>You have already registered for this event. See you on the field!</p>
-    {% else %}
-        <a href="{% url 'confirmation' event.id %}">Register</a>
-    {% endif %}
-    
-    {% if submitted %}
-        <p>You have already submitted for this event. See you on the field!</p>
-    {% else %}
-        <a href="{% url 'project_submission' event.id %}">Submit</a>
-    {% endif %} 
-    </div>
-    </section>
-
-    <section>
-        <h5>Event Participants: {{event.participants.all.count}}</h5>
-        {% for user in event.participants.all %}
-            <a href="{% url 'profile' user.id %}"><strong><div>{{user.name}}</div></strong></a>
-        {% endfor %}
-    </section>
-
-
-
-    </div>
-
-{% endblock content%}
+{% endblock %}

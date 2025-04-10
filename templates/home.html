@@ -1,46 +1,98 @@
-{% extends 'main.html' %}
-
+{% extends "main.html" %}
 
 {% block content %}
-
-<div class="section" id="home__hero">
-    <div id="hero__content">
-        <h3 id="intro--headline">Home of NYC Tapeball Cricket!</h3>
-
-        <h6 id="intro--subheadline">Compete, learn, or network while playing in one of the hottest games in NYC. </h6>
-    </div>
-</div>
-
-        
-    <section>
-        <div>
-            <h4>Events:</h4>
+<!-- Hero Section -->
+<section class="hero-section d-flex align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h1 class="display-4 fw-bold mb-4">
+                    <span class="text-primary">NYC</span>
+                    <span class="text-secondary">Tapeball</span>
+                    <span class="d-block mt-3">Premier League</span>
+                </h1>
+                <p class="lead mb-5">Urban Cricket. Elite Competition.</p>
+                <a href="#events" class="btn btn-custom">
+                    View Tournaments
+                    <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            </div>
         </div>
-        <div class="events--lists section">
+    </div>
+</section>
+
+<!-- Events Section -->
+<section id="events" class="py-5 my-5">
+    <div class="container">
+        <h2 class="text-center mb-5 fw-bold">
+            <span class="text-primary me-2">01</span>
+            Current Battles
+        </h2>
+
+        <div class="row g-4">
             {% for event in events %}
-                <div class="row">
-                    <div class="col-6">
-                        <div class="card">
-                            <div class="container">
-                                <h6>{{ event.name }}</h6>
-                                <br>
-                                <p><strong>Start Date:</strong>  {{event.start_date|date:"m.d.Y"}}</p>
-                                <p><strong>End Date:</strong>  {{event.end_date|date:"m.d.Y"}}</p>
-                                <p><strong>Registration Deadline:</strong>  {{event.registration_deadline|date:"m.d.Y"}}</p>
-                                {% if event.draft_date == today|date:"Y-m-d" %}
-                                     <a href="{% url 'live_draft' event_id=event.id %}">Start Draft</a>
-                                {% else %}
-                                     <p> Draft date: {{ event.draft_date }} </p>
-                                {% endif %}
-                                <p><strong>Participants:</strong> {{event.participants.all.count}}</p>
-                                <p><strong>Location:</strong>  {{event.location}}</p>
-                                <br>
-                                <a href="{% url 'event' event.pk %}">{{ event.name }}</a>
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h3 class="mb-0">{{ event.name }}</h3>
+                            {% if event.draft_date == today|date:"Y-m-d" %}
+                            <span class="badge bg-danger">Live</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="event-meta">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-calendar me-2"></i>
+                                {{ event.start_date|date:"M j" }} - {{ event.end_date|date:"M j" }}
+                            </div>
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="bi bi-geo-alt me-2"></i>
+                                {{ event.location }}
+                            </div>
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-people me-2"></i>
+                                {{ event.participants.all.count }} Teams
                             </div>
                         </div>
+
+                        <a href="{% url 'event' event.pk %}" class="btn btn-outline-primary w-100">
+                            Details <i class="bi bi-arrow-right-short"></i>
+                        </a>
                     </div>
-                </div>  
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <div class="empty-state">
+                    <i class="bi bi-trophy fs-1 text-muted"></i>
+                    <p class="mt-3 text-muted">No active tournaments</p>
+                </div>
+            </div>
             {% endfor %}
-        </div>  
-    </section>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="bg-dark text-white py-5">
+    <div class="container text-center">
+        <h2 class="mb-4">Ready to Lead Your Team?</h2>
+        <div class="d-flex justify-content-center gap-3">
+            {% if user.is_authenticated %}
+            <a href="{% url 'account' %}" class="btn btn-custom">
+                Manage Squad <i class="bi bi-person-gear ms-2"></i>
+            </a>
+            {% else %}
+            <a href="{% url 'register' %}" class="btn btn-custom">
+                Create Account <i class="bi bi-person-plus ms-2"></i>
+            </a>
+            <a href="{% url 'login' %}" class="btn btn-outline-light">
+                Sign In <i class="bi bi-box-arrow-in-right ms-2"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
 {% endblock %}

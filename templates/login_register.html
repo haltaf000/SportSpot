@@ -1,51 +1,98 @@
 {% extends 'main.html' %}
+{% load static %}
 
-{% block content %}        
-            {% if page == 'register' %}
+{% block content %}
+<section class="d-flex align-items-center min-vh-100 py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <!-- Auth Card -->
+                <div class="card border-0 shadow-lg">
+                    <div class="card-body p-5">
+                        {% if page == 'register' %}
+                        <!-- Registration Form -->
+                        <h2 class="text-center mb-4 display-6 fw-bold">Create Account</h2>
+                        <form method="POST" action="{% url 'register' %}">
+                            {% csrf_token %}
+                            <div class="mb-4">
+                                <label for="{{ form.first_name.id_for_label }}" class="form-label fw-medium">Full
+                                    Name</label>
+                                {{ form.first_name }}
+                                {% for error in form.first_name.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
 
-        <section class="rules">
-                <div class="login-register--container">
-                    
-                        <h4 class="form-field--title">Create an Account</h4>
-                        <br>
-                        <div>
-                            <form method="POST" action="{% url 'register' %}">
-                                {% csrf_token %}
-                                {{form.as_p}}
-                                <br>
-                                <input type="submit" value="Register"/>
-                            </form>
-                        </div>
-                        <br>
-                        <p>Already have an account? <strong><a href="{% url 'login' %}">Login</a></strong></p>
+                            <div class="mb-4">
+                                <label for="{{ form.email.id_for_label }}" class="form-label fw-medium">Email
+                                    Address</label>
+                                {{ form.email }}
+                                {% for error in form.email.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
 
+                            <div class="mb-4">
+                                <label for="{{ form.password1.id_for_label }}"
+                                    class="form-label fw-medium">Password</label>
+                                {{ form.password1 }}
+                                {% for error in form.password1.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="{{ form.password2.id_for_label }}" class="form-label fw-medium">Confirm
+                                    Password</label>
+                                {{ form.password2 }}
+                                {% for error in form.password2.errors %}
+                                <div class="text-danger small mt-1">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <button type="submit" class="btn btn-custom w-100 py-3">
+                                Register <i class="bi bi-person-plus ms-2"></i>
+                            </button>
+
+                            <div class="text-center mt-4">
+                                <p class="text-muted">Already registered?
+                                    <a href="{% url 'login' %}" class="text-primary fw-bold">Sign in here</a>
+                                </p>
+                            </div>
+                        </form>
+
+                        {% else %}
+                        <!-- Login Form -->
+                        <h2 class="text-center mb-4 display-6 fw-bold">Team Login</h2>
+                        <form method="POST" action="{% url 'login' %}">
+                            {% csrf_token %}
+                            <div class="mb-4">
+                                <label for="email" class="form-label fw-medium">Email Address</label>
+                                <input type="email" name="email" class="form-control form-control-lg" id="email"
+                                    placeholder="name@example.com" required>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="password" class="form-label fw-medium">Password</label>
+                                <input type="password" name="password" class="form-control form-control-lg"
+                                    id="password" placeholder="Password" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-custom w-100 py-3">
+                                Sign In <i class="bi bi-box-arrow-in-right ms-2"></i>
+                            </button>
+
+                            <div class="text-center mt-4">
+                                <p class="text-muted">New to the league?
+                                    <a href="{% url 'register' %}" class="text-primary fw-bold">Join now</a>
+                                </p>
+                            </div>
+                        </form>
+                        {% endif %}
+                    </div>
                 </div>
-        </section>
-        
-    {% else %}
-    <section class="rules">
-        <div>
-            <h4>Login User</h4>
-            <br>
-            <form method="POST" action="{% url 'login' %}">
-                {% csrf_token %}
-                <div>
-                    <label>Email</label>
-                    <input type="email" name="email"/>
-                </div>
-                <br>
-                <div>
-                    <label>Password</label>
-                    <input type="password" name="password"/>
-                </div>
-                <br>
-                <div>
-                    <input type="submit" value="Login"/>
-                </div>
-                <br>
-                <p>Do not have an account? <strong><a href="{% url 'register' %}">Register</a></strong></p>
-            </form>
+            </div>
         </div>
-    </section>
-    {% endif %}
-{% endblock content%}
+    </div>
+</section>
+{% endblock %}

@@ -1,19 +1,123 @@
 {% extends 'main.html' %}
 
 {% block content %}
-    <section class="rules">
-        <h1>About Us</h1>
-        <p>Started off with a few friends playing on the weekends. </p>
-        <br>
-        <div>
-            <h4>The Team</h4>
-            <p>We are a growing team, searching for candidates to take key positions.</p>
+<!-- Hero Section -->
+<section class="hero-section d-flex align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <h1 class="display-4 fw-bold mb-4">About NYC Tapeball</h1>
+                <p class="lead mb-5">From weekend cricket games to an elite urban league. We're driven by passion and
+                    competition.</p>
+                <a href="#team" class="btn btn-custom">
+                    Meet the Team
+                    <i class="bi bi-people-fill ms-2"></i>
+                </a>
+            </div>
         </div>
-        <br>
-        <div>
-            <h5>Whats Next for Us?</h5>
-            <p>Nothing for now!</p>
-        </div>
-    </section>
+    </div>
+</section>
 
-{% endblock content%}
+<!-- Mission Section -->
+<section class="py-5 my-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center">
+                <div class="feature-card p-5 border-0 shadow-sm">
+                    <h2 class="display-6 fw-bold mb-4">Our Mission</h2>
+                    <p class="lead text-muted">To bring together cricket enthusiasts of all skill levels, build a strong
+                        community, and create unforgettable competitive experiences through teamwork and sportsmanship.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Values Section -->
+<section class="bg-light py-5">
+    <div class="container">
+        <h2 class="text-center mb-5 fw-bold">
+            <span class="text-primary me-2">02</span>
+            Core Values
+        </h2>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 shadow-sm">
+                    <div class="card-body p-4 text-center">
+                        <i class="bi bi-shield-check text-primary fs-1 mb-3"></i>
+                        <h3 class="h4 mb-3">Integrity</h3>
+                        <p class="text-muted mb-0">Fair play and transparency in every match, building trust through
+                            consistent ethical conduct.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 shadow-sm">
+                    <div class="card-body p-4 text-center">
+                        <i class="bi bi-heart-fill text-primary fs-1 mb-3"></i>
+                        <h3 class="h4 mb-3">Community</h3>
+                        <p class="text-muted mb-0">Fostering lasting relationships that extend beyond the boundary line.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4">
+                <div class="card feature-card h-100 shadow-sm">
+                    <div class="card-body p-4 text-center">
+                        <i class="bi bi-trophy-fill text-primary fs-1 mb-3"></i>
+                        <h3 class="h4 mb-3">Excellence</h3>
+                        <p class="text-muted mb-0">Pushing boundaries to develop world-class talent and competitions.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Future Section -->
+<section class="bg-dark text-white py-5">
+    <div class="container text-center">
+        <h2 class="mb-4 fw-bold">What's Next?</h2>
+        <p class="lead mb-5 opacity-75">Expanding to 10 borough-wide tournaments, youth development programs, and
+            live-streamed championship matches.</p>
+        <a href="#events" class="btn btn-custom">
+            View Roadmap
+            <i class="bi bi-arrow-right ms-2"></i>
+        </a>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5">
+    <div class="container text-center">
+        <div class="feature-card p-5 border-0 shadow-sm">
+            <h2 class="display-6 fw-bold mb-4">Join the Movement</h2>
+            <p class="lead text-muted mb-5">Ready to showcase your skills in NYC's most competitive tapeball
+                environment?</p>
+            <div class="d-flex justify-content-center gap-3">
+                {% if user.is_authenticated %}
+                <a href="{% url 'account' %}" class="btn btn-custom">
+                    Manage Team
+                    <i class="bi bi-gear ms-2"></i>
+                </a>
+                {% else %}
+                <a href="{% url 'register' %}" class="btn btn-custom">
+                    Create Account
+                    <i class="bi bi-person-plus ms-2"></i>
+                </a>
+                <a href="{% url 'login' %}" class="btn btn-outline-primary">
+                    Sign In
+                    <i class="bi bi-box-arrow-in-right ms-2"></i>
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

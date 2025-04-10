@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
+from datetime import  datetime
 
 
 
@@ -162,9 +163,6 @@ def team_detail(request, team_id):
     team = get_object_or_404(Team, id=team_id)
     context = {'team': team}
     return render(request, 'team_detail.html', context)
-
-
-from datetime import  datetime
 
 
 @login_required(login_url='/login')
