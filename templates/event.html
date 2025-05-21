@@ -1,4 +1,4 @@
-{% extends 'main.html' %}
+{% extends 'base/main.html' %}
 {% load static %}
 
 {% block content %}
@@ -30,8 +30,8 @@
         <div class="lg:col-span-2 space-y-8">
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                 <h1 class="text-3xl font-bold text-gray-900">{{ event.name }}</h1>
-                
-                <!-- Event Details -->
+
+<!-- Event Details -->
                 <div class="mt-6 space-y-4">
                     <div class="flex items-center text-gray-600">
                         <i class="fas fa-map-marker-alt w-5"></i>
@@ -44,16 +44,16 @@
                     <div class="flex items-center text-gray-600">
                         <i class="fas fa-trophy w-5"></i>
                         <span class="ml-2">{{ event.get_format_display }}</span>
-                    </div>
                 </div>
+            </div>
 
                 <!-- Description -->
                 <div class="mt-8">
                     <h2 class="text-xl font-semibold text-gray-900 mb-4">About the Event</h2>
                     <div class="prose max-w-none">
                         {{ event.description|linebreaks }}
-                    </div>
-                </div>
+            </div>
+        </div>
 
                 <!-- Rules -->
                 {% if event.rules %}
@@ -76,7 +76,7 @@
                             <i class="fas fa-plus mr-2"></i> Register Team
                         </a>
                     {% endif %}
-                </div>
+        </div>
 
                 {% if event.teams.all %}
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -87,7 +87,7 @@
                                 {% else %}
                                     <div class="h-12 w-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
                                         <i class="fas fa-users"></i>
-                                    </div>
+            </div>
                                 {% endif %}
                                 <div>
                                     <h3 class="text-sm font-medium text-gray-900">
@@ -96,8 +96,8 @@
                                         </a>
                                     </h3>
                                     <p class="text-sm text-gray-500">{{ team.members.count }} members</p>
-                                </div>
-                            </div>
+            </div>
+        </div>
                         {% endfor %}
                     </div>
                 {% else %}
@@ -285,5 +285,5 @@
             </a>
         </div>
     {% endif %}
-</div>
+    </div>
 {% endblock %}

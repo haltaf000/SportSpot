@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     # Core URLs
@@ -10,6 +11,36 @@ urlpatterns = [
     path('about/', views.about_page, name='about'),
     path('teams/', views.team_list, name='teams'),
     path('user/<int:pk>/', views.user_page, name='user-profile'),
+    
+    # Authentication URLs
+    path('login/', views.login_page, name='login'),
+    path('register/', views.register_page, name='register'),
+    path('verify-email/<str:token>/', views.verify_email, name='verify-email'),
+    path('logout/', views.logout_user, name='logout'),
+    
+    # Password Reset URLs
+    path('password-reset/', 
+         auth_views.PasswordResetView.as_view(
+             template_name='authentication/password_reset.html',
+             email_template_name='authentication/password_reset_email.html',
+             subject_template_name='authentication/password_reset_subject.txt'
+         ),
+         name='password_reset'),
+    path('password-reset/done/',
+         auth_views.PasswordResetDoneView.as_view(
+             template_name='authentication/password_reset_done.html'
+         ),
+         name='password_reset_done'),
+    path('password-reset-confirm/<uidb64>/<token>/',
+         auth_views.PasswordResetConfirmView.as_view(
+             template_name='authentication/password_reset_confirm.html'
+         ),
+         name='password_reset_confirm'),
+    path('password-reset-complete/',
+         auth_views.PasswordResetCompleteView.as_view(
+             template_name='authentication/password_reset_complete.html'
+         ),
+         name='password_reset_complete'),
     
     # Event URLs
     path('create-event/', views.create_event, name='create-event'),
@@ -30,11 +61,6 @@ urlpatterns = [
     path('event/<int:pk>/draft/stop/', views.stop_draft, name='stop-draft'),
     path('event/<int:pk>/manage-teams/', views.manage_teams, name='manage-teams'),
     
-    # Authentication URLs
-    path('login/', views.login_page, name='login'),
-    path('register/', views.register_page, name='register'),
-    path('logout/', views.logout_user, name='logout'),
-
     # Player Registration URL
     path('event/<int:pk>/register-player/', views.register_player, name='register-player'),
 

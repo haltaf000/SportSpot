@@ -37,6 +37,12 @@ CSRF_TRUSTED_ORIGINS = ['https://sportspot.onrender.com/']
 # Custom user model
 AUTH_USER_MODEL = 'base.User'
 
+# Authentication backends
+AUTHENTICATION_BACKENDS = [
+    'base.backends.EmailBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
 
 # Application definition
 INSTALLED_APPS = [
@@ -124,6 +130,19 @@ TIME_ZONE = 'America/New_York'
 USE_TZ = True
 
 
+# Email settings
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # For development
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'localhost')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 25))
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'False') == 'True'
+DEFAULT_FROM_EMAIL = 'SportSpot <noreply@sportspot.com>'
+
+# Session settings
+SESSION_COOKIE_AGE = 30 * 24 * 60 * 60  # 30 days for "remember me"
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True  # Will be overridden by "remember me"
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 STATIC_URL = '/static/'
@@ -140,3 +159,14 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Authentication settings
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
+
+# Password reset settings
+PASSWORD_RESET_TIMEOUT = 259200  # 3 days in seconds
+
+# Email verification settings
+EMAIL_VERIFICATION_TIMEOUT = 604800  # 7 days in seconds

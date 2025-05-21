@@ -1,75 +1,170 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import User, Event, Submission, Team, Match, PlayerStats, DraftControl
-from .forms import SubmissionForm, CustomUserCreateForm, UserForm, TeamForm, AdminDraftControlForm, EventForm, MatchForm, PlayerStatsForm, PlayerRegistrationForm
+from .forms import SubmissionForm, UserForm, TeamForm, AdminDraftControlForm, EventForm, MatchForm, PlayerStatsForm, PlayerRegistrationForm, CustomAuthenticationForm, CustomUserCreationForm
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
-from django.db.models import Q
+from django.db.models import Q, Prefetch, Count, F
+from django.core.cache import cache
+from django.views.decorators.cache import cache_page
+from django.views.decorators.http import require_http_methods
+from django.core.paginator import Paginator
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_protect
 from datetime import datetime, timedelta
 from random import shuffle
+import uuid
+from django.core.mail import send_mail
+from django.conf import settings
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.urls import reverse
+from functools import wraps
 
 
 
 # Create your views here.
 
 
+# Cache timeouts
+CACHE_TTL = 60 * 15  # 15 minutes
+CACHE_TTL_LONG = 60 * 60  # 1 hour
+CACHE_TTL_SHORT = 60 * 5  # 5 minutes
+
+def cache_per_user(timeout=CACHE_TTL):
+    """
+    Cache decorator that includes the user's ID in the cache key.
+    """
+    def decorator(view_func):
+        @wraps(view_func)
+        def _wrapped_view(request, *args, **kwargs):
+            if not request.user.is_authenticated:
+                return view_func(request, *args, **kwargs)
+            
+            cache_key = f'view_cache_{request.user.id}_{request.path}'
+            response = cache.get(cache_key)
+            
+            if response is None:
+                response = view_func(request, *args, **kwargs)
+                cache.set(cache_key, response, timeout)
+            
+            return response
+        return _wrapped_view
+    return decorator
+
+@cache_page(CACHE_TTL)
 def about_page(request):
     return render(request, "about.html", {})
 
+@cache_page(CACHE_TTL)
 def rule_page(request):
     return render(request, "rules.html", {})
 
+@require_http_methods(["GET", "POST"])
 def login_page(request):
     if request.user.is_authenticated:
         return redirect('home')
         
-    page = 'login'
     if request.method == 'POST':
-        email = request.POST.get('email', '').lower()
-        password = request.POST.get('password', '')
-        
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            messages.error(request, 'User does not exist')
-            return redirect('login')
+        form = CustomAuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            remember_me = form.cleaned_data.get('remember_me', False)
             
-        user = authenticate(request, email=email, password=password)
-        if user is not None:
-            login(request, user)
-            messages.success(request, f'Welcome back, {user.name}!')
-            return redirect('home')
+            user = authenticate(request, username=username, password=password)
+            if user is not None:
+                if not user.email_verified:
+                    messages.error(request, 'Please verify your email address before logging in.')
+                    return redirect('login')
+                    
+                login(request, user)
+                
+                if remember_me:
+                    request.session.set_expiry(30 * 24 * 60 * 60)
+                else:
+                    request.session.set_expiry(0)
+                
+                messages.success(request, f'Welcome back, {user.name or user.username}!')
+                return redirect('home')
+            else:
+                messages.error(request, 'Invalid email or password.')
         else:
-            messages.error(request, 'Invalid password')
+            for error in form.non_field_errors():
+                messages.error(request, error)
+    else:
+        form = CustomAuthenticationForm()
     
-    context = {'page': page}
-    return render(request, 'login_register.html', context)
+    return render(request, 'authentication/login.html', {'form': form})
 
 def register_page(request):
     if request.user.is_authenticated:
         return redirect('home')
         
-    form = CustomUserCreateForm()
     if request.method == 'POST':
-        form = CustomUserCreateForm(request.POST, request.FILES)
+        form = CustomUserCreationForm(request.POST, request.FILES)
         if form.is_valid():
             user = form.save(commit=False)
-            user.email = user.email.lower()
+            user.email_verification_token = str(uuid.uuid4())
+            user.email_verification_sent_at = timezone.now()
             user.save()
+            
+            # Create player stats
             PlayerStats.objects.create(player=user)
-            login(request, user)
-            messages.success(request, 'Account created successfully!')
-            return redirect('home')
+            
+            # Send verification email
+            verification_url = request.build_absolute_uri(
+                reverse('verify-email', args=[user.email_verification_token])
+            )
+            
+            try:
+                context = {
+                    'user': user,
+                    'verification_url': verification_url
+                }
+                html_message = render_to_string('email/verify_email.html', context)
+                plain_message = strip_tags(html_message)
+                
+                send_mail(
+                    'Verify your SportSpot account',
+                    plain_message,
+                    settings.DEFAULT_FROM_EMAIL,
+                    [user.email],
+                    html_message=html_message,
+                    fail_silently=False,
+                )
+                
+                messages.success(request, 'Account created successfully! Please check your email to verify your account.')
+            except Exception as e:
+                messages.warning(request, 'Account created but unable to send verification email. Please contact support.')
+            
+            return redirect('login')
         else:
-            for error in form.errors.values():
-                messages.error(request, error)
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field}: {error}")
+    else:
+        form = CustomUserCreationForm()
     
-    page = 'register'
-    context = {'page': page, 'form': form}
-    return render(request, 'login_register.html', context)
+    return render(request, 'authentication/register.html', {'form': form})
+
+def verify_email(request, token):
+    try:
+        user = User.objects.get(email_verification_token=token)
+        if user.email_verification_sent_at < timezone.now() - timezone.timedelta(days=7):
+            messages.error(request, 'Verification link has expired. Please request a new one.')
+        else:
+            user.email_verified = True
+            user.email_verification_token = None
+            user.save()
+            messages.success(request, 'Email verified successfully! You can now log in.')
+    except User.DoesNotExist:
+        messages.error(request, 'Invalid verification link.')
+    
+    return redirect('login')
 
 def logout_user(request):
     logout(request)
@@ -78,62 +173,110 @@ def logout_user(request):
 
 def home(request):
     search_query = request.GET.get('q', '')
-    upcoming_events = Event.objects.filter(
-        start_date__gt=timezone.now()
-    ).order_by('start_date')[:5]
+    page = request.GET.get('page', 1)
     
-    ongoing_events = Event.objects.filter(
-        start_date__lte=timezone.now(),
-        end_date__gt=timezone.now()
-    )
+    # Try to get cached data
+    cache_key = f'home_data_{search_query}_{page}'
+    cached_data = cache.get(cache_key)
     
-    recent_matches = Match.objects.filter(
-        status='completed'
-    ).order_by('-date')[:5]
-    
-    if search_query:
-        users = User.objects.filter(
-            Q(name__icontains=search_query) |
-            Q(username__icontains=search_query)
+    if cached_data is None:
+        # Query optimization with select_related and prefetch_related
+        upcoming_events = Event.objects.select_related('organizer').prefetch_related(
+            'teams',
+            Prefetch('matches', queryset=Match.objects.select_related('team1', 'team2'))
+        ).filter(
+            start_date__gt=timezone.now()
+        ).order_by('start_date')[:5]
+        
+        ongoing_events = Event.objects.select_related('organizer').prefetch_related(
+            'teams'
+        ).filter(
+            start_date__lte=timezone.now(),
+            end_date__gt=timezone.now()
         )
-        events = Event.objects.filter(
-            Q(name__icontains=search_query) |
-            Q(description__icontains=search_query)
-        )
+        
+        recent_matches = Match.objects.select_related(
+            'team1', 'team2', 'winner'
+        ).filter(
+            status='completed'
+        ).order_by('-date')[:5]
+        
+        if search_query:
+            users = User.objects.filter(
+                Q(name__icontains=search_query) |
+                Q(username__icontains=search_query)
+            ).select_related('stats')
+            
+            events = Event.objects.filter(
+                Q(name__icontains=search_query) |
+                Q(description__icontains=search_query)
+            ).select_related('organizer')
+        else:
+            users = User.objects.filter(
+                cricket_participant=True
+            ).select_related('stats')[:8]
+            events = upcoming_events
+        
+        # Paginate results
+        paginator = Paginator(events, 10)
+        events_page = paginator.get_page(page)
+        
+        context = {
+            'users': users,
+            'events': events_page,
+            'upcoming_events': upcoming_events,
+            'ongoing_events': ongoing_events,
+            'recent_matches': recent_matches,
+            'search_query': search_query
+        }
+        
+        # Cache the data
+        cache.set(cache_key, context, CACHE_TTL)
     else:
-        users = User.objects.filter(cricket_participant=True)[:8]
-        events = upcoming_events
+        context = cached_data
     
-    context = {
-        'users': users,
-        'events': events,
-        'upcoming_events': upcoming_events,
-        'ongoing_events': ongoing_events,
-        'recent_matches': recent_matches,
-        'search_query': search_query
-    }
     return render(request, 'home.html', context)
 
 def user_page(request, pk):
-    user = get_object_or_404(User, id=pk)
-    stats = PlayerStats.objects.get_or_create(player=user)[0]
-    participated_events = Event.objects.filter(participants=user)
-    upcoming_matches = Match.objects.filter(
-        Q(team1__captain=user) | Q(team2__captain=user),
-        status='scheduled'
-    )
-    recent_matches = Match.objects.filter(
-        Q(team1__players=user) | Q(team2__players=user),
-        status='completed'
-    ).order_by('-date')[:5]
+    cache_key = f'user_page_{pk}'
+    cached_data = cache.get(cache_key)
     
-    context = {
-        'profile_user': user,
-        'stats': stats,
-        'participated_events': participated_events,
-        'upcoming_matches': upcoming_matches,
-        'recent_matches': recent_matches
-    }
+    if cached_data is None:
+        user = get_object_or_404(
+            User.objects.select_related('stats'),
+            id=pk
+        )
+        
+        stats = PlayerStats.objects.get_or_create(player=user)[0]
+        
+        participated_events = Event.objects.filter(
+            participants=user
+        ).select_related('organizer')
+        
+        upcoming_matches = Match.objects.filter(
+            Q(team1__captain=user) | Q(team2__captain=user),
+            status='scheduled'
+        ).select_related('team1', 'team2')
+        
+        recent_matches = Match.objects.filter(
+            Q(team1__players=user) | Q(team2__players=user),
+            status='completed'
+        ).select_related(
+            'team1', 'team2', 'winner'
+        ).order_by('-date')[:5]
+        
+        context = {
+            'profile_user': user,
+            'stats': stats,
+            'participated_events': participated_events,
+            'upcoming_matches': upcoming_matches,
+            'recent_matches': recent_matches
+        }
+        
+        cache.set(cache_key, context, CACHE_TTL)
+    else:
+        context = cached_data
+    
     return render(request, 'profile.html', context)
 
 @login_required(login_url='/login')
@@ -255,38 +398,63 @@ def edit_event(request, pk):
     
     return render(request, 'event_form.html', {'form': form, 'event': event})
 
+@cache_per_user(CACHE_TTL_SHORT)
 def event_detail(request, pk):
-    event = get_object_or_404(Event, id=pk)
+    # Get event with all related data in a single query
+    event = get_object_or_404(
+        Event.objects.select_related('organizer').prefetch_related(
+            'teams',
+            'teams__captain',
+            'teams__players',
+            Prefetch(
+                'matches',
+                queryset=Match.objects.select_related('team1', 'team2', 'winner').order_by('date')
+            )
+        ),
+        id=pk
+    )
+    
     registered = False
     submitted = False
     is_admin = False
     
     if request.user.is_authenticated:
-        # Check if user is in any team that's part of this event
-        registered = request.user.teams.filter(event=event).exists()
-        submitted = Submission.objects.filter(
-            participant=request.user,
-            event=event
-        ).exists()
-        is_admin = request.user.is_staff or request.user == event.organizer
-    
-    teams = Team.objects.filter(event=event)
-    matches = Match.objects.filter(event=event).order_by('date')
-    submissions = Submission.objects.filter(
-        event=event,
-        status='approved'
-    )
+        # Use cached results for user permissions
+        cache_key = f'user_event_perms_{request.user.id}_{event.id}'
+        cached_perms = cache.get(cache_key)
+        
+        if cached_perms is None:
+            registered = request.user.teams.filter(event=event).exists()
+            submitted = Submission.objects.filter(
+                participant=request.user,
+                event=event
+            ).exists()
+            is_admin = request.user.is_staff or request.user == event.organizer
+            
+            cached_perms = {
+                'registered': registered,
+                'submitted': submitted,
+                'is_admin': is_admin
+            }
+            cache.set(cache_key, cached_perms, CACHE_TTL)
+        else:
+            registered = cached_perms['registered']
+            submitted = cached_perms['submitted']
+            is_admin = cached_perms['is_admin']
     
     context = {
         'event': event,
         'registered': registered,
         'submitted': submitted,
         'is_admin': is_admin,
-        'teams': teams,
-        'matches': matches,
-        'submissions': submissions,
+        'teams': event.teams.all(),
+        'matches': event.matches.all(),
+        'submissions': Submission.objects.filter(
+            event=event,
+            status='approved'
+        ),
         'can_edit': event.can_edit(request.user),
-        'is_registered': request.user.is_authenticated and request.user.teams.filter(event=event).exists(),
+        'is_registered': request.user.is_authenticated and registered,
     }
     return render(request, 'event.html', context)
 
@@ -343,9 +511,10 @@ def create_team(request, event_id):
     context = {'form': form, 'event': event}
     return render(request, 'team_form.html', context)
 
+@cache_per_user(CACHE_TTL_SHORT)
 def team_list(request):
     search_query = request.GET.get('q', '')
-    teams = Team.objects.all()
+    teams = Team.objects.select_related('event', 'captain').prefetch_related('players')
     
     if search_query:
         teams = teams.filter(
@@ -358,13 +527,21 @@ def team_list(request):
     if event_id:
         teams = teams.filter(event_id=event_id)
     
-    # Get all events for filtering
-    events = Event.objects.all()
+    # Get all events for filtering - cache this query
+    cache_key = 'all_events'
+    events = cache.get(cache_key)
+    if events is None:
+        events = Event.objects.all()
+        cache.set(cache_key, events, CACHE_TTL)
     
-    # Get available events for team creation (where registration is still open)
-    available_events = Event.objects.filter(
-        team_registration_deadline__gt=timezone.now()
-    ).order_by('team_registration_deadline')
+    # Get available events for team creation
+    cache_key = 'available_events'
+    available_events = cache.get(cache_key)
+    if available_events is None:
+        available_events = Event.objects.filter(
+            team_registration_deadline__gt=timezone.now()
+        ).order_by('team_registration_deadline')
+        cache.set(cache_key, available_events, CACHE_TTL_SHORT)
     
     context = {
         'teams': teams,

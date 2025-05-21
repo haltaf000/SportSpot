@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 from .models import Submission, User, Event, Team, Match, PlayerStats
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import DraftControl
 from django.core.exceptions import ValidationError
 from django.utils import timezone
@@ -47,27 +47,46 @@ class UserForm(forms.ModelForm):
             'skill_level': forms.NumberInput(attrs={'min': 1, 'max': 5}),
         }
              
-class CustomUserCreateForm(UserCreationForm):
+class CustomUserCreationForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+    name = forms.CharField(required=True)
+    
     class Meta:
         model = User
         fields = ['name', 'username', 'email', 'password1', 'password2', 'bio', 
-                 'cricket_participant', 'profile_picture', 'phone_number', 
-                 'skill_level', 'batting_style', 'bowling_style']
-        widgets = {
-            'username': forms.TextInput(attrs={'class':'form-field--input'}),
-            'name': forms.TextInput(attrs={'class':'form-field--input'}),
-            'email':forms.EmailInput(attrs={'class':'form-field--input'}),
-            'password1': forms.PasswordInput(attrs={'class': 'form-field--input'}),
-            'password2': forms.PasswordInput(attrs={'class': 'form-field--input'}),
-            'bio': forms.Textarea(attrs={'rows': 4}),
-            'skill_level': forms.NumberInput(attrs={'min': 1, 'max': 5}),
-        }
-
+                 'cricket_participant', 'profile_picture', 'phone_number']
+        
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if User.objects.filter(email=email).exists():
-            raise ValidationError("Email already exists")
+        if email:
+            email = email.lower()
+            if User.objects.filter(email=email).exists():
+                raise ValidationError("A user with this email already exists.")
         return email
+        
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data['email'].lower()
+        if commit:
+            user.save()
+        return user
+
+class CustomAuthenticationForm(AuthenticationForm):
+    username = forms.EmailField(widget=forms.EmailInput(attrs={
+        'class': 'appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md',
+        'placeholder': 'Enter your email'
+    }))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={
+        'class': 'appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md',
+        'placeholder': 'Enter your password'
+    }))
+    remember_me = forms.BooleanField(required=False, initial=False)
+    
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if username:
+            username = username.lower()
+        return username
 
 class EventForm(forms.ModelForm):
     class Meta:
