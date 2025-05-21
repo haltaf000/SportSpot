@@ -1,67 +1,231 @@
 {% extends 'main.html' %}
 
 {% block content %}
-<!-- Profile Section -->
-<section class="py-5 bg-light">
-    <div class="container">
-        <div class="text-center mb-4">
-            <h2 class="fw-bold">{{ user.name }}</h2>
-            <p class="text-muted">{{ user.email }}</p>
-        </div>
-
-        <!-- Bio Section -->
-        <div class="mb-5">
-            <h4 class="fw-bold text-dark">Bio</h4>
-            <p>{{ user.bio }}</p>
-        </div>
-
-        <!-- Contact Information Section -->
-        <div class="mb-5">
-            <h4 class="fw-bold text-dark">Contact Information</h4>
-            <p><strong>Email:</strong> {{ user.email }}</p>
-            <p><strong>Phone:</strong> {{ user.phone_number }}</p>
-        </div>
-
-        <!-- My Events Section -->
-        <div class="mb-5">
-            <h4 class="fw-bold text-dark">My Events</h4>
-            {% if user.events.all %}
-            <ul class="list-group">
-                {% for event in user.events.all %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <a href="{% url 'event' event.id %}" class="text-dark">{{ event.name }}</a>
-                    <span class="badge bg-primary">{{ event.start_date|date:"m.d.Y" }}</span>
-                </li>
-                {% endfor %}
-            </ul>
-            {% else %}
-            <p class="text-muted">You have not registered for any events yet.</p>
+<div class="max-w-7xl mx-auto space-y-12">
+    <!-- Profile Header -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="relative h-48 bg-gradient-to-r from-primary-600 to-primary-800">
+            <!-- Cover Photo -->
+            {% if profile_user.cover_photo %}
+                <img src="{{ profile_user.cover_photo.url }}" 
+                     alt="Cover photo" 
+                     class="absolute inset-0 w-full h-full object-cover">
             {% endif %}
         </div>
-
-        <!-- My Submissions Section -->
-        <div class="mb-5">
-            <h4 class="fw-bold text-dark">My Submissions</h4>
-            {% if user.submissions.all %}
-            <ul class="list-group">
-                {% for submission in user.submissions.all %}
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <a href="{% url 'update_submission' submission.id %}" class="text-dark">{{ submission.event.name
-                        }}</a>
-                    <span class="badge bg-success">Submitted</span>
-                </li>
-                {% endfor %}
-            </ul>
-            {% else %}
-            <p class="text-muted">You have not submitted any projects yet.</p>
-            {% endif %}
+        <div class="relative px-6 pb-6">
+            <!-- Profile Picture -->
+            <div class="absolute -top-16 flex items-center space-x-6">
+                {% if profile_user.profile_picture %}
+                    <img src="{{ profile_user.profile_picture.url }}" 
+                         alt="{{ profile_user.name|default:profile_user.username }}" 
+                         class="h-32 w-32 rounded-full border-4 border-white object-cover shadow-lg">
+                {% else %}
+                    <div class="h-32 w-32 rounded-full border-4 border-white bg-primary-600 flex items-center justify-center text-white text-4xl font-bold shadow-lg">
+                        {{ profile_user.name|default:profile_user.username|first|upper }}
+                    </div>
+                {% endif %}
+                <div class="pt-16">
+                    <h1 class="text-2xl font-bold text-gray-900">{{ profile_user.name|default:profile_user.username }}</h1>
+                    <p class="text-gray-500">Member since {{ profile_user.date_joined|date:"F Y" }}</p>
+                </div>
         </div>
 
-        <!-- Edit Profile Button -->
-        <div class="text-center">
-            <a href="{% url 'edit_profile' user.id %}" class="btn btn-warning btn-lg">Edit Profile</a>
+            <!-- Profile Actions -->
+            {% if request.user == profile_user %}
+                <div class="absolute top-6 right-6 flex space-x-4">
+                    <a href="{% url 'edit-profile' %}" 
+                       class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-150">
+                        <i class="fas fa-edit mr-2"></i> Edit Profile
+                    </a>
+        </div>
+            {% endif %}
         </div>
     </div>
-</section>
 
+    <!-- Profile Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left Column: Personal Info -->
+        <div class="space-y-8">
+            <!-- Basic Info -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Basic Information</h2>
+                <div class="space-y-4">
+                    {% if profile_user.location %}
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Location</label>
+                            <p class="text-gray-900">{{ profile_user.location }}</p>
+                        </div>
+                    {% endif %}
+                    {% if profile_user.bio %}
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">About</label>
+                            <p class="text-gray-900">{{ profile_user.bio }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Cricket Profile -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Cricket Profile</h2>
+                <div class="space-y-4">
+                    {% if profile_user.skill_level %}
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Skill Level</label>
+                            <p class="text-gray-900">{{ profile_user.get_skill_level_display }}</p>
+                        </div>
+                    {% endif %}
+                    {% if profile_user.playing_role %}
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Playing Role</label>
+                            <p class="text-gray-900">{{ profile_user.playing_role }}</p>
+                        </div>
+                    {% endif %}
+                    {% if profile_user.batting_style %}
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Batting Style</label>
+                            <p class="text-gray-900">{{ profile_user.batting_style }}</p>
+                        </div>
+                    {% endif %}
+                    {% if profile_user.bowling_style %}
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Bowling Style</label>
+                            <p class="text-gray-900">{{ profile_user.bowling_style }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+        </div>
+
+            <!-- Teams -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Teams</h2>
+                {% if profile_user.teams.all %}
+                    <div class="space-y-4">
+                        {% for team in profile_user.teams.all %}
+                            <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+                                {% if team.logo %}
+                                    <img src="{{ team.logo.url }}" 
+                                         alt="{{ team.name }}" 
+                                         class="h-12 w-12 rounded-full object-cover">
+                                {% else %}
+                                    <div class="h-12 w-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-bold">
+                                        {{ team.name|first|upper }}
+                                    </div>
+                                {% endif %}
+                                <div class="min-w-0">
+                                    <h3 class="text-sm font-medium text-gray-900 truncate">
+                                        <a href="{% url 'team-detail' team.id %}" class="hover:text-primary-600">
+                                            {{ team.name }}
+                                        </a>
+                                    </h3>
+                                    <p class="text-sm text-gray-500">
+                                        {% if team.captain == profile_user %}Captain{% else %}Member{% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                {% endfor %}
+                    </div>
+            {% else %}
+                    <p class="text-center text-gray-500 py-4">Not a member of any teams yet.</p>
+            {% endif %}
+            </div>
+        </div>
+
+        <!-- Center Column: Stats & Activity -->
+        <div class="lg:col-span-2 space-y-8">
+            <!-- Player Stats -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-6">Player Statistics</h2>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-6">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-primary-600">{{ profile_user.stats.matches_played|default:"0" }}</div>
+                        <p class="text-sm text-gray-500">Matches</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-primary-600">{{ profile_user.stats.runs_scored|default:"0" }}</div>
+                        <p class="text-sm text-gray-500">Runs</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-primary-600">{{ profile_user.stats.wickets_taken|default:"0" }}</div>
+                        <p class="text-sm text-gray-500">Wickets</p>
+                    </div>
+        <div class="text-center">
+                        <div class="text-2xl font-bold text-primary-600">{{ profile_user.stats.catches_taken|default:"0" }}</div>
+                        <p class="text-sm text-gray-500">Catches</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Matches -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-6">Recent Matches</h2>
+                {% if recent_matches %}
+                    <div class="space-y-6">
+                        {% for match in recent_matches %}
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                <div class="min-w-0">
+                                    <h3 class="text-sm font-medium text-gray-900 truncate">
+                                        {{ match.event.name }}
+                                    </h3>
+                                    <div class="mt-1 flex items-center space-x-4">
+                                        <div class="flex items-center">
+                                            <span class="font-medium text-gray-900">{{ match.team1.name }}</span>
+                                            {% if match.team1_score %}
+                                                <span class="ml-2 text-sm text-primary-600">{{ match.team1_score }}</span>
+                                            {% endif %}
+                                        </div>
+                                        <span class="text-gray-500">vs</span>
+                                        <div class="flex items-center">
+                                            <span class="font-medium text-gray-900">{{ match.team2.name }}</span>
+                                            {% if match.team2_score %}
+                                                <span class="ml-2 text-sm text-primary-600">{{ match.team2_score }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <p class="mt-1 text-sm text-gray-500">
+                                        {{ match.date|date:"F j, Y" }}
+                                    </p>
+                                </div>
+                                {% if match.winner %}
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {% if match.winner == profile_user.team %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                                        {% if match.winner == profile_user.team %}Won{% else %}Lost{% endif %}
+                                    </span>
+                                {% else %}
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                                        Upcoming
+                                    </span>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-center text-gray-500 py-8">No recent matches to display.</p>
+                {% endif %}
+            </div>
+
+            <!-- Achievements -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-6">Achievements</h2>
+                {% if achievements %}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        {% for achievement in achievements %}
+                            <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+                                <div class="flex-shrink-0">
+                                    <i class="fas fa-trophy text-2xl text-yellow-500"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <h3 class="text-sm font-medium text-gray-900">{{ achievement.title }}</h3>
+                                    <p class="text-sm text-gray-500">{{ achievement.description }}</p>
+                                    <p class="text-xs text-gray-400 mt-1">Earned {{ achievement.date|date:"F j, Y" }}</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-center text-gray-500 py-8">No achievements yet.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

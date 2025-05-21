@@ -1,190 +1,209 @@
 {% extends 'main.html' %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="hero-section d-flex align-items-center">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 text-center">
-                <h1 class="display-4 fw-bold mb-4">Game Regulations</h1>
-                <p class="lead mb-5">Modern guidelines for fair and competitive tape-ball cricket</p>
-            </div>
+<div class="max-w-7xl mx-auto space-y-12">
+    <!-- Hero Section -->
+    <div class="relative bg-gradient-to-r from-primary-600 to-primary-800 rounded-2xl overflow-hidden">
+        <div class="absolute inset-0">
+            <div class="absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-800 mix-blend-multiply"></div>
+        </div>
+        <div class="relative max-w-4xl mx-auto px-4 py-16 sm:px-6 lg:py-24">
+            <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
+                Tournament Rules
+            </h1>
+            <p class="mt-6 max-w-2xl text-xl text-primary-100">
+                Everything you need to know about participating in SportSpot tournaments.
+            </p>
         </div>
     </div>
-</section>
 
-<!-- Rules Content -->
-<section class="py-5 my-5">
-    <div class="container">
-        <div class="row g-5">
-            <!-- Fielding Regulations -->
-            <div class="col-md-6">
-                <div class="card feature-card h-100 shadow-sm">
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center mb-3">
-                            <i class="bi bi-diagram-3 fs-1 text-primary me-3"></i>
-                            <h2 class="h3 fw-bold mb-0">Fielding Rules</h2>
-                        </div>
-                        <p class="text-muted">Adapting to NYC's urban cricket landscape</p>
-                        <ul class="list-unstyled">
-                            <li class="d-flex mb-2">
-                                <i class="bi bi-arrow-right-short text-primary me-2"></i>
-                                <strong>Powerplay:</strong> Max 3 players outside circle
+    <!-- Rules Navigation -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-4">
+            <!-- Sidebar Navigation -->
+            <div class="lg:border-r border-gray-100">
+                <nav class="p-6 space-y-1" x-data="{ activeSection: 'general' }">
+                    <button @click="activeSection = 'general'"
+                            :class="{'bg-primary-50 text-primary-600': activeSection === 'general'}"
+                            class="w-full text-left px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-150">
+                        General Rules
+                    </button>
+                    <button @click="activeSection = 'teams'"
+                            :class="{'bg-primary-50 text-primary-600': activeSection === 'teams'}"
+                            class="w-full text-left px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-150">
+                        Team Formation
+                    </button>
+                    <button @click="activeSection = 'matches'"
+                            :class="{'bg-primary-50 text-primary-600': activeSection === 'matches'}"
+                            class="w-full text-left px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-150">
+                        Match Rules
+                    </button>
+                    <button @click="activeSection = 'conduct'"
+                            :class="{'bg-primary-50 text-primary-600': activeSection === 'conduct'}"
+                            class="w-full text-left px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors duration-150">
+                        Code of Conduct
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Rules Content -->
+            <div class="lg:col-span-3 p-6 lg:p-8" x-data="{ activeSection: 'general' }">
+                <!-- General Rules -->
+                <div x-show="activeSection === 'general'" class="space-y-6">
+                    <h2 class="text-2xl font-bold text-gray-900">General Rules</h2>
+                    <div class="prose max-w-none">
+                        <ul class="space-y-4 text-gray-600">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>All players must be registered on SportSpot with complete profiles.</span>
                             </li>
-                            <li class="d-flex mb-2">
-                                <i class="bi bi-arrow-right-short text-primary me-2"></i>
-                                Boundary restrictions based on venue size
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>Tournament registration must be completed before the specified deadline.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>Players can only be registered with one team per tournament.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>All matches will be played according to the official tournament schedule.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Team Formation Rules -->
+                <div x-show="activeSection === 'teams'" class="space-y-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Team Formation</h2>
+                    <div class="prose max-w-none">
+                        <ul class="space-y-4 text-gray-600">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>Teams must have a minimum of 11 players and maximum of 15 players.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>Each team must designate a captain who will be responsible for team management.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>Team rosters must be finalized before the tournament begins.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>Player transfers between teams are not allowed during the tournament.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Match Rules -->
+                <div x-show="activeSection === 'matches'" class="space-y-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Match Rules</h2>
+                    <div class="prose max-w-none">
+                        <ul class="space-y-4 text-gray-600">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>Matches will consist of specified overs as per tournament format.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>Teams must arrive at least 30 minutes before scheduled match time.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>Match officials' decisions are final and must be respected.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>Points will be awarded according to tournament guidelines.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Code of Conduct -->
+                <div x-show="activeSection === 'conduct'" class="space-y-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Code of Conduct</h2>
+                    <div class="prose max-w-none">
+                        <ul class="space-y-4 text-gray-600">
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>Players must maintain sportsmanship and respect towards all participants.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>Any form of discrimination or harassment will not be tolerated.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>Violations of the code of conduct may result in penalties or disqualification.</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
+                                <span>Teams are responsible for their supporters' behavior.</span>
                             </li>
                         </ul>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <!-- Dismissal Rules -->
-            <div class="col-md-6">
-                <div class="card feature-card h-100 shadow-sm">
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center mb-3">
-                            <i class="bi bi-x-octagon fs-1 text-primary me-3"></i>
-                            <h2 class="h3 fw-bold mb-0">Valid Dismissals</h2>
-                        </div>
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <div class="badge bg-primary-subtle text-primary">Caught</div>
-                            </div>
-                            <div class="col-6">
-                                <div class="badge bg-primary-subtle text-primary">Run Out</div>
-                            </div>
-                            <div class="col-6">
-                                <div class="badge bg-primary-subtle text-primary">Hit Wicket</div>
-                            </div>
-                            <div class="col-6">
-                                <div class="badge bg-primary-subtle text-primary">Obstruction</div>
-                            </div>
-                        </div>
+    <!-- FAQ Section -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="p-6 lg:p-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-8">Frequently Asked Questions</h2>
+            <div class="space-y-4" x-data="{ activeQuestion: null }">
+                <div class="border-b border-gray-100 pb-4">
+                    <button @click="activeQuestion = activeQuestion === 1 ? null : 1"
+                            class="w-full flex justify-between items-center text-left">
+                        <span class="text-lg font-medium text-gray-900">How do I register my team?</span>
+                        <i class="fas" :class="{'fa-chevron-down': activeQuestion !== 1, 'fa-chevron-up': activeQuestion === 1}"></i>
+                    </button>
+                    <div x-show="activeQuestion === 1" class="mt-4 text-gray-600">
+                        Create an account on SportSpot, navigate to the tournament page, and click on "Register Team". Follow the instructions to complete your team registration.
                     </div>
                 </div>
-            </div>
 
-            <!-- Team Composition -->
-            <div class="col-md-6">
-                <div class="card feature-card h-100 shadow-sm">
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center mb-3">
-                            <i class="bi bi-people fs-1 text-primary me-3"></i>
-                            <h2 class="h3 fw-bold mb-0">Team Rules</h2>
-                        </div>
-                        <div class="row g-3">
-                            <div class="col-6">
-                                <div class="border p-2 text-center rounded">
-                                    <div class="text-primary fw-bold">12</div>
-                                    <small class="text-muted">Max Squad</small>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="border p-2 text-center rounded">
-                                    <div class="text-primary fw-bold">9</div>
-                                    <small class="text-muted">Field Players</small>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <ul class="list-unstyled text-muted">
-                                    <li class="mb-1">✓ 4 Batsmen minimum</li>
-                                    <li class="mb-1">✓ 3-4 Allrounders</li>
-                                    <li class="mb-1">✓ 1 Wicketkeeper</li>
-                                </ul>
-                            </div>
-                        </div>
+                <div class="border-b border-gray-100 pb-4">
+                    <button @click="activeQuestion = activeQuestion === 2 ? null : 2"
+                            class="w-full flex justify-between items-center text-left">
+                        <span class="text-lg font-medium text-gray-900">What happens if a match is postponed?</span>
+                        <i class="fas" :class="{'fa-chevron-down': activeQuestion !== 2, 'fa-chevron-up': activeQuestion === 2}"></i>
+                    </button>
+                    <div x-show="activeQuestion === 2" class="mt-4 text-gray-600">
+                        In case of postponement, teams will be notified through the platform and email. The rescheduled match details will be updated on the tournament schedule.
                     </div>
                 </div>
-            </div>
 
-            <!-- Match Protocols -->
-            <div class="col-md-6">
-                <div class="card feature-card h-100 shadow-sm">
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center mb-3">
-                            <i class="bi bi-stopwatch fs-1 text-primary me-3"></i>
-                            <h2 class="h3 fw-bold mb-0">Match Protocols</h2>
-                        </div>
-                        <div class="timeline">
-                            <div class="timeline-item">
-                                <div class="timeline-icon bg-primary text-white">30'</div>
-                                <div class="timeline-content">
-                                    <strong>Player Arrival</strong>
-                                    <small class="text-muted">Before match start</small>
-                                </div>
-                            </div>
-                            <div class="timeline-item">
-                                <div class="timeline-icon bg-primary text-white">15'</div>
-                                <div class="timeline-content">
-                                    <strong>Final Team List</strong>
-                                    <small class="text-muted">Submission deadline</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Equipment Section -->
-            <div class="col-12">
-                <div class="card feature-card shadow-sm">
-                    <div class="card-body p-4">
-                        <div class="d-flex align-items-center mb-3">
-                            <i class="bi bi-gear fs-1 text-primary me-3"></i>
-                            <h2 class="h3 fw-bold mb-0">Equipment & Gear</h2>
-                        </div>
-                        <p class="text-muted mb-0">
-                            Provided: Bats, balls, stumps. Teams bring own protective gear.
-                            Color-coded jerseys provided for each tournament.
-                        </p>
+                <div class="border-b border-gray-100 pb-4">
+                    <button @click="activeQuestion = activeQuestion === 3 ? null : 3"
+                            class="w-full flex justify-between items-center text-left">
+                        <span class="text-lg font-medium text-gray-900">How are disputes handled?</span>
+                        <i class="fas" :class="{'fa-chevron-down': activeQuestion !== 3, 'fa-chevron-up': activeQuestion === 3}"></i>
+                    </button>
+                    <div x-show="activeQuestion === 3" class="mt-4 text-gray-600">
+                        Disputes should be reported to tournament officials through the platform. A committee will review and make decisions based on tournament rules and regulations.
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</section>
 
-<style>
-    /* Rules Page Specific Styles */
-    .hero-section {
-        background: linear-gradient(rgba(255, 255, 255, 0.95),
-                url('https://source.unsplash.com/1600x900/?cricket-pitch') center/cover;
-                min-height: 50vh;
-        }
-
-        .timeline {
-            position: relative;
-            padding-left: 40px;
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 1.5rem;
-        }
-
-        .timeline-icon {
-            position: absolute;
-            left: -40px;
-            top: 0;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-        }
-
-        .timeline-content {
-            border-left: 2px solid var(--primary-red);
-            padding-left: 1rem;
-            padding-bottom: 1rem;
-        }
-
-        .badge.bg-primary-subtle {
-            background-color: rgba(230, 57, 70, 0.1) !important;
-        }
-</style>
+    <!-- Contact Section -->
+    <div class="bg-primary-50 rounded-2xl p-8 lg:p-12">
+        <div class="text-center">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">Still Have Questions?</h2>
+            <p class="text-lg text-gray-600 mb-8">
+                If you have any questions about the rules or regulations, please reach out to the tournament organizers directly through your event page.
+            </p>
+            <a href="{% url 'home' %}" 
+               class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-150">
+                Back to Home
+            </a>
+        </div>
+    </div>
+</div>
 {% endblock %}

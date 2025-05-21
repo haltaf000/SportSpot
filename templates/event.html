@@ -2,101 +2,288 @@
 {% load static %}
 
 {% block content %}
-<!-- Custom Styles -->
-<link rel='stylesheet' type='text/css' media='screen' href='{% static "css/event.css" %}'>
-
-<!-- Hero Section -->
-<section class="hero py-5" style="background: linear-gradient(135deg, #4e73df, #1c8cdc); color: #ffffff;">
-    <div class="container text-center">
-        <h1 class="display-4 fw-bold">{{ event.name }}</h1>
-        <p class="lead mb-5">{{ event.preview }}</p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Event Header -->
+    <div class="relative">
+        {% if event.banner %}
+            <img src="{{ event.banner.url }}" alt="{{ event.name }}" class="w-full h-64 object-cover rounded-xl">
+        {% else %}
+            <div class="w-full h-64 bg-primary-100 rounded-xl flex items-center justify-center">
+                <i class="fas fa-trophy text-6xl text-primary-600"></i>
+            </div>
+        {% endif %}
+        
+        <!-- Status Badge -->
+        <div class="absolute top-4 right-4">
+            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                {% if event.status == 'upcoming' %}bg-green-100 text-green-800
+                {% elif event.status == 'in_progress' %}bg-blue-100 text-blue-800
+                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                {{ event.get_status_display }}
+            </span>
+        </div>
     </div>
-</section>
 
-<!-- Event Details -->
-<section class="py-5 bg-light">
-    <div class="container">
-        <!-- Draft Section -->
-        <div class="row mb-5">
-            <div class="col-md-6">
-                <h5 class="fw-bold text-dark">📅 Draft Date</h5>
-                <p class="text-muted">{{ event.draft_date|date:"m.d.Y" }}</p>
-                <div class="d-flex gap-3">
-                    <a href="{% url 'live_draft' event_id=event.id %}" class="btn btn-primary btn-lg">Start Draft</a>
-                    <a href="{% url 'manage_teams' event_id=event.id %}" class="btn btn-secondary btn-lg">Manage
-                        Teams</a>
-                    <a href="{% url 'live_draft' event_id=event.id %}" class="btn btn-info btn-lg">View Draft</a>
+    <!-- Event Info -->
+    <div class="mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Main Content -->
+        <div class="lg:col-span-2 space-y-8">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h1 class="text-3xl font-bold text-gray-900">{{ event.name }}</h1>
+                
+                <!-- Event Details -->
+                <div class="mt-6 space-y-4">
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-map-marker-alt w-5"></i>
+                        <span class="ml-2">{{ event.location }}</span>
+                    </div>
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-calendar w-5"></i>
+                        <span class="ml-2">{{ event.start_date|date:"M d, Y" }} - {{ event.end_date|date:"M d, Y" }}</span>
+                    </div>
+                    <div class="flex items-center text-gray-600">
+                        <i class="fas fa-trophy w-5"></i>
+                        <span class="ml-2">{{ event.get_format_display }}</span>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="mt-8">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">About the Event</h2>
+                    <div class="prose max-w-none">
+                        {{ event.description|linebreaks }}
+                    </div>
+                </div>
+
+                <!-- Rules -->
+                {% if event.rules %}
+                <div class="mt-8">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">Rules & Guidelines</h2>
+                    <div class="prose max-w-none">
+                        {{ event.rules|linebreaks }}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Teams Section -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-semibold text-gray-900">Participating Teams</h2>
+                    {% if event.is_registration_open %}
+                        <a href="{% url 'create-team' event_id=event.id %}" 
+                           class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700">
+                            <i class="fas fa-plus mr-2"></i> Register Team
+                        </a>
+                    {% endif %}
+                </div>
+
+                {% if event.teams.all %}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {% for team in event.teams.all %}
+                            <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+                                {% if team.logo %}
+                                    <img src="{{ team.logo.url }}" alt="{{ team.name }}" class="h-12 w-12 rounded-full object-cover">
+                                {% else %}
+                                    <div class="h-12 w-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
+                                        <i class="fas fa-users"></i>
+                                    </div>
+                                {% endif %}
+                                <div>
+                                    <h3 class="text-sm font-medium text-gray-900">
+                                        <a href="{% url 'team-detail' team.id %}" class="hover:text-primary-600">
+                                            {{ team.name }}
+                                        </a>
+                                    </h3>
+                                    <p class="text-sm text-gray-500">{{ team.members.count }} members</p>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-center text-gray-500 py-8">No teams have registered yet.</p>
+                {% endif %}
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="mt-8 flex flex-col sm:flex-row gap-4">
+                {% if request.user.is_authenticated %}
+                    {% if not user_in_event %}
+                        {% if can_register_team %}
+                            <a href="{% url 'create-team' event_id=event.id %}" 
+                               class="inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                <i class="fas fa-users-cog mr-2"></i>
+                                Create Team
+                            </a>
+                        {% endif %}
+                        {% if can_register_player %}
+                            <a href="{% url 'register-player' pk=event.id %}" 
+                               class="inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                <i class="fas fa-user-plus mr-2"></i>
+                                Register as Player
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <div class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-gray-50">
+                            <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                            Already Registered
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'login' %}?next={{ request.path }}" 
+                       class="inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        <i class="fas fa-sign-in-alt mr-2"></i>
+                        Login to Register
+                    </a>
+                {% endif %}
+            </div>
+
+            <!-- Registration Status -->
+            {% if request.user.is_authenticated %}
+                <div class="mt-4">
+                    {% if user_in_event %}
+                        <div class="bg-green-50 border border-green-100 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <i class="fas fa-check-circle text-green-600 mr-3"></i>
+                                <div>
+                                    <h3 class="text-lg font-medium text-green-900">You're Registered!</h3>
+                                    <p class="mt-1 text-green-700">
+                                        {% if user_team %}
+                                            You are registered as captain of team "{{ user_team.name }}"
+                                        {% else %}
+                                            You are registered as a player in the draft pool
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    {% elif event.player_registration_deadline and current_time > event.player_registration_deadline %}
+                        <div class="bg-yellow-50 border border-yellow-100 rounded-lg p-4">
+                            <div class="flex items-center">
+                                <i class="fas fa-clock text-yellow-600 mr-3"></i>
+                                <div>
+                                    <h3 class="text-lg font-medium text-yellow-900">Registration Closed</h3>
+                                    <p class="mt-1 text-yellow-700">
+                                        The registration deadline for this event has passed.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-6">
+            <!-- Event Actions -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div class="space-y-4">
+                    {% if can_edit %}
+                        <a href="{% url 'edit-event' pk=event.id %}" 
+                           class="w-full inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700">
+                            <i class="fas fa-edit mr-2"></i> Edit Event
+                        </a>
+                    {% endif %}
+                    
+                    {% if event.is_registration_open and not is_registered %}
+                        <a href="{% url 'create-team' event_id=event.id %}" 
+                           class="w-full inline-flex items-center justify-center px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                            <i class="fas fa-plus mr-2"></i> Register Team
+                        </a>
+                    {% endif %}
                 </div>
             </div>
 
-            <!-- Important Dates Section -->
-            <div class="col-md-6">
-                <h5 class="fw-bold text-dark">📅 Important Dates</h5>
-                <p><strong>Start Date:</strong> {{ event.start_date|date:"m.d.Y" }}</p>
-                <p><strong>End Date:</strong> {{ event.end_date|date:"m.d.Y" }}</p>
-                <p><strong>Registration Deadline:</strong> {{ event.registration_deadline|date:"m.d.Y" }}</p>
+            <!-- Event Info Cards -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-4">
+                <!-- Prize Pool -->
+                <div>
+                    <label class="text-sm font-medium text-gray-500">Prize Pool</label>
+                    <p class="mt-1 text-2xl font-bold text-gray-900">${{ event.prize_pool }}</p>
+                </div>
+
+                <!-- Entry Fee -->
+                <div>
+                    <label class="text-sm font-medium text-gray-500">Entry Fee</label>
+                    <p class="mt-1 text-2xl font-bold text-gray-900">${{ event.entry_fee }}</p>
+                </div>
+
+                <!-- Team Registration Deadline -->
+                <div>
+                    <label class="text-sm font-medium text-gray-500">Team Registration Deadline</label>
+                    {% if event.team_registration_deadline %}
+                        <p class="mt-1 text-lg font-semibold text-gray-900">
+                            {{ event.team_registration_deadline|date:"F j, Y, g:i a" }}
+                        </p>
+                    {% else %}
+                        <p class="mt-1 text-lg text-gray-500">Not set</p>
+                    {% endif %}
+                </div>
+
+                <!-- Player Registration Deadline -->
+                <div>
+                    <label class="text-sm font-medium text-gray-500">Player Registration Deadline</label>
+                    {% if event.player_registration_deadline %}
+                        <p class="mt-1 text-lg font-semibold text-gray-900">
+                            {{ event.player_registration_deadline|date:"F j, Y, g:i a" }}
+                        </p>
+                    {% else %}
+                        <p class="mt-1 text-lg text-gray-500">Not set</p>
+                    {% endif %}
+                </div>
+
+                <!-- Draft Start Time -->
+                <div>
+                    <label class="text-sm font-medium text-gray-500">Draft Start Time</label>
+                    {% if event.draft_start_time %}
+                        <p class="mt-1 text-lg font-semibold text-gray-900">
+                            {{ event.draft_start_time|date:"F j, Y, g:i a" }}
+                        </p>
+                    {% else %}
+                        <p class="mt-1 text-lg text-gray-500">Not set</p>
+                    {% endif %}
+                </div>
+
+                <!-- Teams Count -->
+                <div>
+                    <label class="text-sm font-medium text-gray-500">Teams</label>
+                    <p class="mt-1 text-2xl font-bold text-gray-900">{{ event.teams.count }}</p>
+                </div>
             </div>
-        </div>
 
-        <!-- Event Description Section -->
-        <div class="row mb-5">
-            <div class="col-md-6">
-                <h5 class="fw-bold text-dark">🖊️ Description</h5>
-                <p>{{ event.description }}</p>
-            </div>
-
-            <!-- Event Format Section -->
-            <div class="col-md-6">
-                <h5 class="fw-bold text-dark">🗄️ Format</h5>
-                <p>{{ event.format }}</p>
-            </div>
-        </div>
-
-        <!-- Event Participation Info -->
-        <div class="row mb-5">
-            <div class="col-md-6">
-                <h5 class="fw-bold text-dark">🙃 Number of Players</h5>
-                <p>{{ event.players }}</p>
-            </div>
-
-            <div class="col-md-6">
-                <h5 class="fw-bold text-dark">🏆 Prizes</h5>
-                <p>{{ event.prizes }}</p>
-            </div>
-        </div>
-
-        <!-- Registration / Submission Section -->
-        <div class="row mb-5">
-            <div class="col-md-12 text-center">
-                {% if registered %}
-                <p class="text-success">You have already registered for this event. See you on the field!</p>
-                {% else %}
-                <a href="{% url 'confirmation' event.id %}" class="btn btn-success btn-lg">Register Now</a>
-                {% endif %}
-
-                {% if submitted %}
-                <p class="text-warning mt-2">You have already submitted for this event. See you on the field!</p>
-                {% else %}
-                <a href="{% url 'project_submission' event.id %}" class="btn btn-warning btn-lg mt-2">Submit Your
-                    Project</a>
-                {% endif %}
+            <!-- Organizer Info -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h3 class="text-sm font-medium text-gray-500 mb-4">Organized by</h3>
+                <div class="flex items-center space-x-3">
+                    {% if event.organizer.profile_picture %}
+                        <img src="{{ event.organizer.profile_picture.url }}" 
+                             alt="{{ event.organizer.name|default:event.organizer.username }}" 
+                             class="h-10 w-10 rounded-full object-cover">
+                    {% else %}
+                        <div class="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
+                            {{ event.organizer.name|default:event.organizer.username|first|upper }}
+                        </div>
+                    {% endif %}
+                    <div>
+                        <h4 class="text-sm font-medium text-gray-900">
+                            {{ event.organizer.name|default:event.organizer.username }}
+                        </h4>
+                        <p class="text-sm text-gray-500">Organizer</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</section>
 
-<!-- Participants List -->
-<section class="py-5">
-    <div class="container">
-        <h5 class="text-center mb-4">Event Participants ({{ event.participants.all.count }})</h5>
-        <div class="list-group">
-            {% for user in event.participants.all %}
-            <a href="{% url 'profile' user.id %}" class="list-group-item list-group-item-action">
-                <strong>{{ user.name }}</strong>
+    {% if request.user.is_staff %}
+        <div class="mt-4">
+            <a href="{% url 'admin-manage-teams' event_id=event.id %}" 
+               class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700">
+                <i class="fas fa-cog mr-2"></i>
+                Staff Team Management
             </a>
-            {% endfor %}
         </div>
-    </div>
-</section>
-
+    {% endif %}
+</div>
 {% endblock %}

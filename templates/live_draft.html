@@ -1,60 +1,162 @@
 {% extends 'main.html' %}
+{% load static %}
+
 {% block content %}
-<section class="rules">
-  <h1>Live Draft</h1>
-  <div>Event: {{ event.name }}</div>
-  <section>
-      {% if is_admin %}
-        <section class="admin-controls">
-          <h2>Admin Controls</h2>
-          {% if event.draft_in_progress %}
-            <form method="post" action="{% url 'stop_draft' event_id=event.id %}">
-              {% csrf_token %}
-              <input type="submit" value="Stop Draft">
-            </form>
-          {% else %}
-            <form method="post" action="{% url 'start_draft' event_id=event.id %}">
-              {% csrf_token %}
-              <input type="submit" value="Start Draft">
-            </form>
-          {% endif %}
-          <a href="{% url 'manage_teams' event_id=event.id %}">Manage Teams</a>
-        </section>
-      {% endif %}
-  </section>
-  <div>Current Turn: {{ event.current_turn }}</div>
-  <table>
-    <thead>
-      <tr>
-        <th>Team</th>
-        <th>Captain</th>
-        <th>Players</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for team in teams %}
-        <tr>
-          <td>{{ team.name }}</td>
-          <td>{{ team.captain }}</td>
-          <td>{{ team.players.all|join:", " }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% if is_captain %}
-    <h2>Select a player to draft</h2>
-    <form method="post">
-      {% csrf_token %}
-      <select name="player">
-        {% for player in available_players %}
-          <option value="{{ player.pk }}">{{ player.name }}</option>
-        {% endfor %}
-      </select>
-      <input type="submit" value="Draft Player">
-    </form>
-  {% else %}
-    <div>You are not a captain and can only view the draft.</div>
-  {% endif %}
-</section>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Live Draft</h1>
+                <p class="mt-1 text-gray-600">{{ event.name }}</p>
+            </div>
+            {% if is_admin %}
+                <div class="flex items-center space-x-4">
+                    {% if event.draft_in_progress %}
+                        <form method="post" action="{% url 'stop-draft' pk=event.id %}">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700">
+                                <i class="fas fa-stop mr-2"></i> Stop Draft
+                            </button>
+                        </form>
+                    {% else %}
+                        <form method="post" action="{% url 'start-draft' pk=event.id %}">
+                            {% csrf_token %}
+                            <button type="submit"
+                                    class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-green-600 hover:bg-green-700">
+                                <i class="fas fa-play mr-2"></i> Start Draft
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Draft Status -->
+        <div class="bg-primary-50 border border-primary-100 rounded-lg p-4 mb-8">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <i class="fas fa-user-clock text-primary-600 text-xl mr-3"></i>
+                    <div>
+                        <p class="text-sm font-medium text-primary-900">Current Turn</p>
+                        {% if current_team %}
+                            <p class="text-lg font-semibold text-primary-700">{{ current_team.name }}</p>
+                        {% else %}
+                            <p class="text-lg font-semibold text-primary-700">Waiting to start...</p>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-sm font-medium text-primary-900">Round</p>
+                    <p class="text-lg font-semibold text-primary-700">{{ current_round }} / {{ max_rounds }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teams Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            {% for team in teams %}
+                <div class="bg-gray-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            {% if team.logo %}
+                                <img src="{{ team.logo.url }}" alt="{{ team.name }}" class="h-10 w-10 rounded-full object-cover">
+                            {% else %}
+                                <div class="h-10 w-10 rounded-full bg-primary-100 flex items-center justify-center">
+                                    <i class="fas fa-users text-primary-600"></i>
+                                </div>
+                            {% endif %}
+                            <div class="ml-3">
+                                <h3 class="text-sm font-medium text-gray-900">{{ team.name }}</h3>
+                                <p class="text-sm text-gray-500">Captain: {{ team.captain.name }}</p>
+                            </div>
+                        </div>
+                        {% if team == current_team %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
+                                Current Pick
+                            </span>
+                        {% endif %}
+                    </div>
+                    <div class="space-y-2">
+                        <p class="text-sm font-medium text-gray-700">Players ({{ team.players.count }}):</p>
+                        <ul class="text-sm text-gray-600 list-disc list-inside">
+                            {% for player in team.players.all %}
+                                <li>{{ player.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <!-- Draft Form -->
+        {% if is_captain %}
+            <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Make Your Pick</h2>
+                <form id="draftForm" method="post" action="{% url 'draft-player' pk=event.id %}" class="space-y-4">
+                    {% csrf_token %}
+                    <div>
+                        <label for="player_id" class="block text-sm font-medium text-gray-700">Select Player</label>
+                        <select name="player_id" id="player_id"
+                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 rounded-md">
+                            <option value="">Select a player...</option>
+                            {% for player in available_players %}
+                                <option value="{{ player.id }}">
+                                    {{ player.name }} - {{ player.skill_level|default:"N/A" }} Rating
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit"
+                            class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                        Draft Player
+                    </button>
+                </form>
+            </div>
+        {% elif not is_admin %}
+            <div class="text-center py-8">
+                <p class="text-gray-500">Waiting for {{ current_team.name }} to make their pick...</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const draftForm = document.getElementById('draftForm');
+    if (draftForm) {
+        draftForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message and reload page
+                    alert(data.message);
+                    window.location.reload();
+                } else {
+                    // Show error message
+                    alert(data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while drafting the player.');
+            });
+        });
+    }
+});
+</script>
+{% endblock %}
+
 {% endblock %}
 

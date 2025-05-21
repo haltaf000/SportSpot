@@ -1,8 +1,14 @@
+/* Variables */
 :root {
     --primary-red: #E63946;
     --dark-charcoal: #2B2D42;
     --light-gray: #EDF2F4;
     --footer-bg: #1A1A1A;
+}
+
+/* Base Styles */
+body {
+    font-family: 'Inter', sans-serif;
 }
 
 /* Navigation */
@@ -77,54 +83,42 @@
     font-size: 0.9rem;
 }
 
-/* Custom Brand Colors */
-.text-primary {
-    color: var(--primary-red) !important;
-}
-
-.text-secondary {
-    color: var(--dark-charcoal) !important;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .navbar-collapse {
-        background: rgba(255, 255, 255, 0.95);
-        padding: 1rem;
-        margin-top: 0.5rem;
-        border-radius: 8px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-}
-
 /* Hero Section */
 .hero-section {
     height: 80vh;
     background: linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.9)),
         url('https://source.unsplash.com/1600x900/?cricket') center/cover;
     padding-top: 100px;
+    min-height: 60vh;
 }
 
-/* Event Cards */
+/* Cards and Features */
 .feature-card {
     transition: transform 0.3s ease;
     border: 1px solid rgba(0, 0, 0, 0.05);
+    background: white;
+    border-radius: 12px;
 }
 
 .feature-card:hover {
     transform: translateY(-5px);
 }
 
+.values-card i {
+    transition: transform 0.3s ease;
+}
+
+.values-card:hover i {
+    transform: scale(1.2);
+}
+
+/* Event Cards */
 .event-meta {
     color: #666;
     font-size: 0.95rem;
 }
 
-/* CTA Section */
-.bg-dark {
-    background-color: var(--dark-charcoal) !important;
-}
-
+/* Buttons and CTAs */
 .btn-custom {
     background: var(--primary-red);
     color: white;
@@ -133,6 +127,7 @@
     transition: all 0.3s ease;
     display: inline-flex;
     align-items: center;
+    font-size: 1.05rem;
 }
 
 .btn-custom:hover {
@@ -140,90 +135,7 @@
     transform: translateY(-2px);
 }
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .hero-section {
-        height: auto;
-        padding: 120px 0 60px;
-    }
-
-    .display-4 {
-        font-size: 2.5rem;
-    }
-}
-
-/* About Page Specific */
-.hero-section {
-    background: linear-gradient(rgba(255, 255, 255, 0.95),
-            url('https://source.unsplash.com/1600x900/?cricket-field') center/cover;
-            min-height: 60vh;
-    }
-
-    .values-card i {
-        transition: transform 0.3s ease;
-    }
-
-    .values-card:hover i {
-        transform: scale(1.2);
-    }
-
-    .bg-light {
-        background-color: var(--light-gray) !important;
-    }
-
-    .feature-card {
-        background: white;
-        border-radius: 12px;
-    }
-
-    /* Responsive Adjustments */
-    @media (max-width: 768px) {
-        .hero-section {
-            min-height: auto;
-            padding: 100px 0 60px;
-        }
-
-        .display-6 {
-            font-size: 1.75rem;
-        }
-    }
-
-/* About Page Specific */
-.hero-section {
-    background: linear-gradient(rgba(255, 255, 255, 0.95),
-            url('https://source.unsplash.com/1600x900/?cricket-field') center/cover;
-            min-height: 60vh;
-    }
-
-    .values-card i {
-        transition: transform 0.3s ease;
-    }
-
-    .values-card:hover i {
-        transform: scale(1.2);
-    }
-
-    .bg-light {
-        background-color: var(--light-gray) !important;
-    }
-
-    .feature-card {
-        background: white;
-        border-radius: 12px;
-    }
-
-    /* Responsive Adjustments */
-    @media (max-width: 768px) {
-        .hero-section {
-            min-height: auto;
-            padding: 100px 0 60px;
-        }
-
-        .display-6 {
-            font-size: 1.75rem;
-        }
-    }
-/* Form Control Enhancements */
+/* Form Controls */
 .form-control {
     padding: 1rem 1.25rem;
     font-size: 1rem;
@@ -244,7 +156,44 @@
     color: var(--dark-charcoal);
 }
 
-.btn-custom {
-    font-size: 1.05rem;
-    padding: 1rem 2rem;
+/* Utility Classes */
+.text-primary {
+    color: var(--primary-red) !important;
+}
+
+.text-secondary {
+    color: var(--dark-charcoal) !important;
+}
+
+.bg-light {
+    background-color: var(--light-gray) !important;
+}
+
+.bg-dark {
+    background-color: var(--dark-charcoal) !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .navbar-collapse {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 1rem;
+        margin-top: 0.5rem;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .hero-section {
+        height: auto;
+        min-height: auto;
+        padding: 120px 0 60px;
+    }
+
+    .display-4 {
+        font-size: 2.5rem;
+    }
+
+    .display-6 {
+        font-size: 1.75rem;
+    }
 }

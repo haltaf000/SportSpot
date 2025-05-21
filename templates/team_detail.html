@@ -1,13 +1,229 @@
 {% extends 'main.html' %}
 
 {% block content %}
-    <h1>{{ team.name }}</h1>
-    <p>Captain: {{ team.captain.username }}</p>
-    <p>Players:
-        {% for player in team.players.all %}
-            {{ player.username }},
+<div class="max-w-7xl mx-auto space-y-12">
+    <!-- Team Header -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="relative h-48 bg-gradient-to-r from-primary-600 to-primary-800">
+            <!-- Team Banner -->
+            {% if team.banner %}
+                <img src="{{ team.banner.url }}" 
+                     alt="Team banner" 
+                     class="absolute inset-0 w-full h-full object-cover">
+            {% endif %}
+        </div>
+        <div class="relative px-6 pb-6">
+            <!-- Team Logo -->
+            <div class="absolute -top-16 flex items-center space-x-6">
+                {% if team.logo %}
+                    <img src="{{ team.logo.url }}" 
+                         alt="{{ team.name }}" 
+                         class="h-32 w-32 rounded-full border-4 border-white object-cover shadow-lg">
+                {% else %}
+                    <div class="h-32 w-32 rounded-full border-4 border-white bg-primary-600 flex items-center justify-center text-white text-4xl font-bold shadow-lg">
+                        {{ team.name|first|upper }}
+                    </div>
+                {% endif %}
+                <div class="pt-16">
+                    <h1 class="text-2xl font-bold text-gray-900">{{ team.name }}</h1>
+                    <p class="text-gray-500">Created {{ team.created_at|date:"F j, Y" }}</p>
+                </div>
+            </div>
+            
+            <!-- Team Actions -->
+            <div class="absolute top-6 right-6 flex space-x-4">
+                {% if request.user == team.captain %}
+                    <a href="{% url 'edit-team' team.id %}" 
+                       class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-150">
+                        <i class="fas fa-edit mr-2"></i> Edit Team
+                    </a>
+                {% elif not request.user in team.members.all %}
+                    <button type="button" 
+                            class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-150">
+                        <i class="fas fa-user-plus mr-2"></i> Join Team
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Team Content -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left Column: Team Info -->
+        <div class="space-y-8">
+            <!-- Basic Info -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Team Information</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Captain</label>
+                        <p class="text-gray-900">{{ team.captain.name|default:team.captain.username }}</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Members</label>
+                        <p class="text-gray-900">{{ team.members.count }} players</p>
+                    </div>
+                    {% if team.location %}
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">Location</label>
+                            <p class="text-gray-900">{{ team.location }}</p>
+                        </div>
+                    {% endif %}
+                    {% if team.description %}
+                        <div>
+                            <label class="text-sm font-medium text-gray-500">About</label>
+                            <p class="text-gray-900">{{ team.description }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Team Stats -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-6">Team Statistics</h2>
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-primary-600">{{ team.stats.matches_played|default:"0" }}</div>
+                        <p class="text-sm text-gray-500">Matches</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-primary-600">{{ team.stats.matches_won|default:"0" }}</div>
+                        <p class="text-sm text-gray-500">Wins</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-primary-600">{{ team.stats.tournaments_won|default:"0" }}</div>
+                        <p class="text-sm text-gray-500">Tournaments</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-primary-600">{{ team.stats.win_percentage|default:"0" }}%</div>
+                        <p class="text-sm text-gray-500">Win Rate</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Column: Members & Activity -->
+        <div class="lg:col-span-2 space-y-8">
+            <!-- Team Members -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900">Team Members</h2>
+                    {% if request.user == team.captain %}
+                        <button type="button" 
+                               class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-150">
+                            <i class="fas fa-user-plus mr-2"></i> Invite Players
+                        </button>
+                    {% endif %}
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {% for member in team.members.all %}
+                        <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+                            {% if member.profile_picture %}
+                                <img src="{{ member.profile_picture.url }}" 
+                                     alt="{{ member.name|default:member.username }}" 
+                                     class="h-12 w-12 rounded-full object-cover">
+                            {% else %}
+                                <div class="h-12 w-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 font-bold">
+                                    {{ member.name|default:member.username|first|upper }}
+                                </div>
+                            {% endif %}
+                            <div class="min-w-0 flex-1">
+                                <h3 class="text-sm font-medium text-gray-900 truncate">
+                                    <a href="{% url 'user-profile' member.id %}" class="hover:text-primary-600">
+                                        {{ member.name|default:member.username }}
+                                    </a>
+                                </h3>
+                                <p class="text-sm text-gray-500">
+                                    {% if member == team.captain %}Captain{% else %}Member{% endif %}
+                                </p>
+                            </div>
+                            {% if request.user == team.captain and member != team.captain %}
+                                <button type="button" 
+                                        class="text-red-600 hover:text-red-800 focus:outline-none">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Recent Matches -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-6">Recent Matches</h2>
+                {% if recent_matches %}
+                    <div class="space-y-6">
+                        {% for match in recent_matches %}
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                <div class="min-w-0">
+                                    <h3 class="text-sm font-medium text-gray-900 truncate">
+                                        {{ match.event.name }}
+                                    </h3>
+                                    <div class="mt-1 flex items-center space-x-4">
+                                        <div class="flex items-center">
+                                            <span class="font-medium text-gray-900">{{ match.team1.name }}</span>
+                                            {% if match.team1_score %}
+                                                <span class="ml-2 text-sm text-primary-600">{{ match.team1_score }}</span>
+                                            {% endif %}
+                                        </div>
+                                        <span class="text-gray-500">vs</span>
+                                        <div class="flex items-center">
+                                            <span class="font-medium text-gray-900">{{ match.team2.name }}</span>
+                                            {% if match.team2_score %}
+                                                <span class="ml-2 text-sm text-primary-600">{{ match.team2_score }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <p class="mt-1 text-sm text-gray-500">
+                                        {{ match.date|date:"F j, Y" }}
+                                    </p>
+                                </div>
+                                {% if match.winner %}
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium {% if match.winner == team %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+                                        {% if match.winner == team %}Won{% else %}Lost{% endif %}
+                                    </span>
+                                {% else %}
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-800">
+                                        Upcoming
+                                    </span>
+                                {% endif %}
+                            </div>
         {% endfor %}
-    </p>
-    <a href="{% url 'edit_team' team.id %}">Edit Team</a>
-    <a href="{% url 'delete_team' team.id %}">Delete Team</a>
+                    </div>
+                {% else %}
+                    <p class="text-center text-gray-500 py-8">No recent matches to display.</p>
+                {% endif %}
+            </div>
+
+            <!-- Upcoming Events -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-6">Upcoming Events</h2>
+                {% if upcoming_events %}
+                    <div class="space-y-6">
+                        {% for event in upcoming_events %}
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                <div class="min-w-0">
+                                    <h3 class="text-sm font-medium text-gray-900 truncate">
+                                        <a href="{% url 'event' pk=event.id %}" class="hover:text-primary-600">
+                                            {{ event.name }}
+                                        </a>
+                                    </h3>
+                                    <p class="mt-1 text-sm text-gray-500">
+                                        {{ event.start_date|date:"M d, Y" }}
+                                    </p>
+                                </div>
+                                <a href="{% url 'event' pk=event.id %}" 
+                                   class="inline-flex items-center px-3 py-1 border border-transparent rounded-full text-sm font-medium text-primary-600 bg-primary-50 hover:bg-primary-100">
+                                    View Details
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-center text-gray-500 py-8">No upcoming events to display.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

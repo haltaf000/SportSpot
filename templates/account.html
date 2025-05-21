@@ -1,63 +1,161 @@
 {% extends 'main.html' %}
 
 {% block content %}
-<section class="bg-light py-5">
-    <div class="container">
-        <h1 class="text-center mb-4">My Account</h1>
-        <div class="text-center mb-4">
-            <h3>{{ user.name }}</h3>
-            <p>{{ user.bio }}</p>
-        </div>
-
-        <div class="d-flex justify-content-center mb-4">
-            <a class="btn btn-warning me-2" href="{% url 'edit' %}">Edit Profile</a>
-            <a class="btn btn-warning" href="#">Reset Password</a>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Profile Header -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+        <div class="flex items-center space-x-6">
+            {% if user.profile_picture %}
+                <img src="{{ user.profile_picture.url }}" alt="{{ user.name|default:user.username }}" class="h-24 w-24 rounded-full object-cover">
+            {% else %}
+                <div class="h-24 w-24 rounded-full bg-primary-100 flex items-center justify-center text-primary-600 text-4xl font-bold">
+                    {{ user.name|default:user.username|first|upper }}
+                </div>
+            {% endif %}
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">{{ user.name|default:user.username }}</h1>
+                <p class="mt-1 text-gray-600">{{ user.email }}</p>
+                <div class="mt-4">
+                    <a href="{% url 'edit-account' %}" 
+                       class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700">
+                        <i class="fas fa-edit mr-2"></i> Edit Profile
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
-</section>
 
-<section class="py-5">
-    <div class="container">
-        <h2 class="text-center mb-4">My Events</h2>
-        <div class="row">
-            {% for event in user.events.all %}
-            <div class="col-md-4 mb-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ event.name }}</h5>
-                        <a href="{% url 'event' event.id %}" class="btn btn-info w-100">View Event</a>
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left Column -->
+        <div class="lg:col-span-2 space-y-8">
+            <!-- Registered Events -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-6">Registered Events</h2>
+                {% if registered_events %}
+                    <div class="space-y-4">
+                        {% for event in registered_events %}
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                <div class="min-w-0">
+                                    <h3 class="text-sm font-medium text-gray-900">
+                                        <a href="{% url 'event' pk=event.id %}" class="hover:text-primary-600">
+                                            {{ event.name }}
+                                        </a>
+                                    </h3>
+                                    <p class="mt-1 text-sm text-gray-500">
+                                        {{ event.start_date|date:"M d, Y" }} - {{ event.end_date|date:"M d, Y" }}
+                                    </p>
+                                </div>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                                    {% if event.status == 'upcoming' %}bg-green-100 text-green-800
+                                    {% elif event.status == 'in_progress' %}bg-blue-100 text-blue-800
+                                    {% else %}bg-gray-100 text-gray-800{% endif %}">
+                                    {{ event.get_status_display }}
+                                </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-center text-gray-500 py-8">You haven't registered for any events yet.</p>
+                {% endif %}
+            </div>
+
+            <!-- Organized Events -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900">Events You're Organizing</h2>
+                    <a href="{% url 'create-event' %}" 
+                       class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700">
+                        <i class="fas fa-plus mr-2"></i> Create Event
+                    </a>
+                </div>
+                {% if organized_events %}
+                    <div class="space-y-4">
+                        {% for event in organized_events %}
+                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                <div class="min-w-0">
+                                    <h3 class="text-sm font-medium text-gray-900">
+                                        <a href="{% url 'event' pk=event.id %}" class="hover:text-primary-600">
+                                            {{ event.name }}
+                                        </a>
+                                    </h3>
+                                    <p class="mt-1 text-sm text-gray-500">
+                                        {{ event.start_date|date:"M d, Y" }} - {{ event.end_date|date:"M d, Y" }}
+                                    </p>
+                                </div>
+                                <a href="{% url 'edit-event' pk=event.id %}" 
+                                   class="inline-flex items-center px-3 py-1 rounded-lg text-sm font-medium text-primary-600 bg-primary-50 hover:bg-primary-100">
+                                    <i class="fas fa-edit mr-1"></i> Edit
+                                </a>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-center text-gray-500 py-8">You haven't organized any events yet.</p>
+                {% endif %}
+            </div>
+
+            <!-- Teams -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-semibold text-gray-900">Your Teams</h2>
+                </div>
+                {% if teams %}
+                    <div class="space-y-4">
+                        {% for team in teams %}
+                            <div class="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg">
+                                {% if team.logo %}
+                                    <img src="{{ team.logo.url }}" alt="{{ team.name }}" class="h-12 w-12 rounded-full object-cover">
+                                {% else %}
+                                    <div class="h-12 w-12 rounded-full bg-primary-100 flex items-center justify-center text-primary-600">
+                                        {{ team.name|default:"Team"|first|upper }}
+                                    </div>
+                                {% endif %}
+                                <div class="min-w-0">
+                                    <h3 class="text-sm font-medium text-gray-900">
+                                        <a href="{% url 'team-detail' pk=team.id %}" class="hover:text-primary-600">
+                                            {{ team.name|default:"Unnamed Team" }}
+                                        </a>
+                                    </h3>
+                                    <p class="mt-1 text-sm text-gray-500">
+                                        {{ team.event.name|default:"No Event" }} • {{ team.players.count }} players
+                                    </p>
+                                </div>
+                                {% if team.captain == user %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
+                                        Captain
+                                    </span>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-center text-gray-500 py-8">You haven't joined any teams yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="space-y-8">
+            <!-- Player Stats -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-6">Player Stats</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Skill Level</label>
+                        <p class="mt-1 text-2xl font-bold text-gray-900">{{ stats.skill_level|default:"Not set" }}</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Batting Style</label>
+                        <p class="mt-1 text-lg text-gray-900">{{ stats.batting_style|default:"Not set" }}</p>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-500">Bowling Style</label>
+                        <p class="mt-1 text-lg text-gray-900">{{ stats.bowling_style|default:"Not set" }}</p>
                     </div>
                 </div>
             </div>
-            {% empty %}
-            <div class="col-12">
-                <p class="text-center">You have not registered for any events.</p>
-            </div>
-            {% endfor %}
         </div>
     </div>
-</section>
-
-<section class="bg-light py-5">
-    <div class="container">
-        <h2 class="text-center mb-4">My Submissions</h2>
-        <div class="row">
-            {% for sub in user.submissions.all %}
-            <div class="col-md-4 mb-3">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ sub.event.name }}</h5>
-                        <a href="{% url 'update_submission' sub.id %}" class="btn btn-info w-100">Update Submission</a>
-                    </div>
-                </div>
-            </div>
-            {% empty %}
-            <div class="col-12">
-                <p class="text-center">You do not have any submissions for any events.</p>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</section>
-
+</div>
 {% endblock %}

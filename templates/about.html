@@ -1,123 +1,126 @@
 {% extends 'main.html' %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="hero-section d-flex align-items-center">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 text-center">
-                <h1 class="display-4 fw-bold mb-4">About NYC Tapeball</h1>
-                <p class="lead mb-5">From weekend cricket games to an elite urban league. We're driven by passion and
-                    competition.</p>
-                <a href="#team" class="btn btn-custom">
-                    Meet the Team
-                    <i class="bi bi-people-fill ms-2"></i>
-                </a>
-            </div>
+<div class="max-w-7xl mx-auto space-y-16">
+    <!-- Hero Section -->
+    <div class="relative bg-gradient-to-r from-primary-600 to-primary-800 rounded-2xl overflow-hidden">
+        <div class="absolute inset-0">
+            <div class="absolute inset-0 bg-gradient-to-r from-primary-600 to-primary-800 mix-blend-multiply"></div>
+        </div>
+        <div class="relative max-w-4xl mx-auto px-4 py-16 sm:px-6 lg:py-24">
+            <h1 class="text-4xl font-extrabold tracking-tight text-white sm:text-5xl lg:text-6xl">
+                About SportSpot
+            </h1>
+            <p class="mt-6 max-w-2xl text-xl text-primary-100">
+                Empowering cricket enthusiasts to organize, participate, and excel in tournaments.
+            </p>
         </div>
     </div>
-</section>
 
-<!-- Mission Section -->
-<section class="py-5 my-5">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-10 text-center">
-                <div class="feature-card p-5 border-0 shadow-sm">
-                    <h2 class="display-6 fw-bold mb-4">Our Mission</h2>
-                    <p class="lead text-muted">To bring together cricket enthusiasts of all skill levels, build a strong
-                        community, and create unforgettable competitive experiences through teamwork and sportsmanship.
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- Values Section -->
-<section class="bg-light py-5">
-    <div class="container">
-        <h2 class="text-center mb-5 fw-bold">
-            <span class="text-primary me-2">02</span>
-            Core Values
-        </h2>
-
-        <div class="row g-4">
-            <div class="col-md-6 col-lg-4">
-                <div class="card feature-card h-100 shadow-sm">
-                    <div class="card-body p-4 text-center">
-                        <i class="bi bi-shield-check text-primary fs-1 mb-3"></i>
-                        <h3 class="h4 mb-3">Integrity</h3>
-                        <p class="text-muted mb-0">Fair play and transparency in every match, building trust through
-                            consistent ethical conduct.</p>
+    <!-- Mission Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div class="space-y-6">
+            <h2 class="text-3xl font-bold text-gray-900">Our Mission</h2>
+            <p class="text-lg text-gray-600">
+                At SportSpot, we're dedicated to revolutionizing how cricket tournaments are organized and experienced. 
+                Our platform brings together players, teams, and organizers to create memorable sporting events.
+            </p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div class="bg-white p-6 rounded-xl border border-gray-100 hover:border-primary-100 transition-colors duration-150">
+                    <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-users text-xl text-primary-600"></i>
                     </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Community Building</h3>
+                    <p class="text-gray-600">Connect with fellow cricket enthusiasts and build lasting relationships.</p>
                 </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card feature-card h-100 shadow-sm">
-                    <div class="card-body p-4 text-center">
-                        <i class="bi bi-heart-fill text-primary fs-1 mb-3"></i>
-                        <h3 class="h4 mb-3">Community</h3>
-                        <p class="text-muted mb-0">Fostering lasting relationships that extend beyond the boundary line.
-                        </p>
+                <div class="bg-white p-6 rounded-xl border border-gray-100 hover:border-primary-100 transition-colors duration-150">
+                    <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-trophy text-xl text-primary-600"></i>
                     </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 col-lg-4">
-                <div class="card feature-card h-100 shadow-sm">
-                    <div class="card-body p-4 text-center">
-                        <i class="bi bi-trophy-fill text-primary fs-1 mb-3"></i>
-                        <h3 class="h4 mb-3">Excellence</h3>
-                        <p class="text-muted mb-0">Pushing boundaries to develop world-class talent and competitions.
-                        </p>
-                    </div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2">Tournament Excellence</h3>
+                    <p class="text-gray-600">Organize and participate in well-structured, competitive tournaments.</p>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-
-<!-- Future Section -->
-<section class="bg-dark text-white py-5">
-    <div class="container text-center">
-        <h2 class="mb-4 fw-bold">What's Next?</h2>
-        <p class="lead mb-5 opacity-75">Expanding to 10 borough-wide tournaments, youth development programs, and
-            live-streamed championship matches.</p>
-        <a href="#events" class="btn btn-custom">
-            View Roadmap
-            <i class="bi bi-arrow-right ms-2"></i>
-        </a>
-    </div>
-</section>
-
-<!-- CTA Section -->
-<section class="py-5">
-    <div class="container text-center">
-        <div class="feature-card p-5 border-0 shadow-sm">
-            <h2 class="display-6 fw-bold mb-4">Join the Movement</h2>
-            <p class="lead text-muted mb-5">Ready to showcase your skills in NYC's most competitive tapeball
-                environment?</p>
-            <div class="d-flex justify-content-center gap-3">
-                {% if user.is_authenticated %}
-                <a href="{% url 'account' %}" class="btn btn-custom">
-                    Manage Team
-                    <i class="bi bi-gear ms-2"></i>
-                </a>
-                {% else %}
-                <a href="{% url 'register' %}" class="btn btn-custom">
-                    Create Account
-                    <i class="bi bi-person-plus ms-2"></i>
-                </a>
-                <a href="{% url 'login' %}" class="btn btn-outline-primary">
-                    Sign In
-                    <i class="bi bi-box-arrow-in-right ms-2"></i>
-                </a>
-                {% endif %}
+        <div class="relative">
+            <div class="aspect-w-16 aspect-h-9 rounded-2xl overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1531415074968-036ba1b575da?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1747&q=80" 
+                     alt="Cricket match" 
+                     class="object-cover">
             </div>
         </div>
     </div>
-</section>
 
+    <!-- Features Section -->
+    <div class="bg-gray-50 rounded-2xl p-8 lg:p-12">
+        <div class="max-w-3xl mx-auto text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Why Choose SportSpot?</h2>
+            <p class="text-lg text-gray-600">
+                We provide a comprehensive platform designed specifically for cricket tournament management.
+            </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-xl border border-gray-100 hover:border-primary-100 transition-all duration-150">
+                <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
+                    <i class="fas fa-calendar-alt text-xl text-primary-600"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Easy Tournament Management</h3>
+                <p class="text-gray-600">Create and manage tournaments with our intuitive interface. Handle registrations, schedules, and results effortlessly.</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl border border-gray-100 hover:border-primary-100 transition-all duration-150">
+                <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
+                    <i class="fas fa-chart-line text-xl text-primary-600"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Player Statistics</h3>
+                <p class="text-gray-600">Track individual and team performance with detailed statistics and analytics.</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl border border-gray-100 hover:border-primary-100 transition-all duration-150">
+                <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
+                    <i class="fas fa-users text-xl text-primary-600"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Team Building</h3>
+                <p class="text-gray-600">Create and manage teams, recruit players, and participate in tournaments together.</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl border border-gray-100 hover:border-primary-100 transition-all duration-150">
+                <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
+                    <i class="fas fa-mobile-alt text-xl text-primary-600"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Mobile Friendly</h3>
+                <p class="text-gray-600">Access SportSpot on any device with our responsive design.</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl border border-gray-100 hover:border-primary-100 transition-all duration-150">
+                <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
+                    <i class="fas fa-bell text-xl text-primary-600"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Real-time Updates</h3>
+                <p class="text-gray-600">Stay informed with instant notifications about matches, scores, and team updates.</p>
+            </div>
+            <div class="bg-white p-6 rounded-xl border border-gray-100 hover:border-primary-100 transition-all duration-150">
+                <div class="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center mb-4">
+                    <i class="fas fa-shield-alt text-xl text-primary-600"></i>
+                </div>
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Secure Platform</h3>
+                <p class="text-gray-600">Your data is protected with our secure and reliable platform.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="bg-white rounded-2xl border border-gray-100 p-8 lg:p-12 text-center">
+        <h2 class="text-3xl font-bold text-gray-900 mb-4">Ready to Get Started?</h2>
+        <p class="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+            Join SportSpot today and experience the future of cricket tournament management.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+            <a href="{% url 'register' %}" 
+               class="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-150">
+                Sign Up Now
+            </a>
+            <a href="{% url 'teams' %}" 
+               class="inline-flex items-center justify-center px-6 py-3 border border-primary-600 text-base font-medium rounded-lg text-primary-600 bg-white hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-colors duration-150">
+                Browse Teams
+            </a>
+        </div>
+    </div>
+</div>
 {% endblock %}

@@ -1,0 +1,99 @@
+{% extends 'main.html' %}
+{% load static %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-8">
+            {% if team %}Edit Team{% else %}Register Team{% endif %}
+        </h2>
+
+        <!-- Registration Deadlines Info -->
+        <div class="mb-8 bg-primary-50 border border-primary-100 rounded-lg p-4">
+            <h3 class="text-lg font-medium text-primary-900 mb-4">Important Deadlines</h3>
+            <div class="space-y-2">
+                <div class="flex items-center text-primary-800">
+                    <i class="fas fa-users-cog w-5"></i>
+                    <span class="ml-2">Team Registration Deadline: 
+                        {% if event.team_registration_deadline %}
+                            {{ event.team_registration_deadline|date:"F j, Y, g:i a" }}
+                        {% else %}
+                            Not set
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="flex items-center text-primary-800">
+                    <i class="fas fa-user-plus w-5"></i>
+                    <span class="ml-2">Player Registration Deadline: 
+                        {% if event.player_registration_deadline %}
+                            {{ event.player_registration_deadline|date:"F j, Y, g:i a" }}
+                        {% else %}
+                            Not set
+                        {% endif %}
+                    </span>
+                </div>
+                <div class="flex items-center text-primary-800">
+                    <i class="fas fa-users w-5"></i>
+                    <span class="ml-2">Maximum Team Size: {{ event.max_team_size }} players</span>
+                </div>
+            </div>
+        </div>
+
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+
+            <!-- Team Name -->
+            <div>
+                <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium text-gray-700">Team Name</label>
+                <div class="mt-1">
+                    <input type="text" 
+                           name="{{ form.name.name }}" 
+                           id="{{ form.name.id_for_label }}"
+                           value="{{ form.name.value|default:'' }}"
+                           class="block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                    {% if form.name.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.name.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div>
+                <label for="{{ form.description.id_for_label }}" class="block text-sm font-medium text-gray-700">Description</label>
+                <div class="mt-1">
+                    <textarea name="{{ form.description.name }}" 
+                              id="{{ form.description.id_for_label }}"
+                              rows="3"
+                              class="block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">{{ form.description.value|default:'' }}</textarea>
+                    {% if form.description.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.description.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Team Logo -->
+            <div>
+                <label for="{{ form.logo.id_for_label }}" class="block text-sm font-medium text-gray-700">Team Logo</label>
+                <div class="mt-1">
+                    <input type="file" 
+                           name="{{ form.logo.name }}" 
+                           id="{{ form.logo.id_for_label }}"
+                           accept="image/*"
+                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100">
+                    {% if form.logo.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.logo.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-6">
+                <button type="submit"
+                        class="w-full inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                    {% if team %}Save Changes{% else %}Register Team{% endif %}
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

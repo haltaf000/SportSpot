@@ -1,35 +1,145 @@
 {% extends 'main.html' %}
 
-
 {% block content %}
-    <h1>Team List</h1>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Team Name</th>
-                <th>Captain</th>
-                <th>Players</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Header -->
+    <div class="md:flex md:items-center md:justify-between mb-8">
+        <div class="flex-1 min-w-0">
+            <h1 class="text-3xl font-bold text-gray-900">Teams</h1>
+            <p class="mt-2 text-gray-600">Browse and join cricket teams</p>
+        </div>
+        {% if request.user.is_authenticated %}
+            <div class="mt-4 md:mt-0 md:ml-4">
+                <!-- Event Selection Modal Trigger -->
+                <button type="button"
+                        onclick="document.getElementById('eventModal').classList.remove('hidden')"
+                        class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700">
+                    <i class="fas fa-plus mr-2"></i> Create Team
+                </button>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Event Selection Modal -->
+    <div id="eventModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium text-gray-900">Select Event</h3>
+                <button type="button" 
+                        onclick="document.getElementById('eventModal').classList.add('hidden')"
+                        class="text-gray-400 hover:text-gray-500">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            {% if available_events %}
+                <div class="space-y-4">
+                    <p class="text-sm text-gray-600">Select an event to create a team for:</p>
+                    {% for event in available_events %}
+                        <a href="{% url 'create-team' event_id=event.id %}"
+                           class="block p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                            <h4 class="font-medium text-gray-900">{{ event.name }}</h4>
+                            <p class="mt-1 text-sm text-gray-600">
+                                Registration Deadline: 
+                                {% if event.team_registration_deadline %}
+                                    {{ event.team_registration_deadline|date:"F j, Y, g:i a" }}
+                                {% else %}
+                                    Not set
+                                {% endif %}
+                            </p>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-center text-gray-600 py-4">No events available for team registration.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+        <form method="get" class="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-4">
+            <!-- Search Input -->
+            <div class="flex-1">
+                <label for="search" class="sr-only">Search teams</label>
+                <div class="relative rounded-md shadow-sm">
+                    <input type="text" 
+                           name="q" 
+                           id="search"
+                           value="{{ search_query }}"
+                           class="block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                           placeholder="Search teams...">
+                </div>
+            </div>
+
+            <!-- Event Filter -->
+            <div class="sm:w-64">
+                <label for="event" class="sr-only">Filter by event</label>
+                <select name="event" 
+                        id="event"
+                        onchange="this.form.submit()"
+                        class="block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                    <option value="">All Events</option>
+                    {% for event in events %}
+                        <option value="{{ event.id }}" {% if selected_event == event.id %}selected{% endif %}>
+                            {{ event.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    </div>
+
+    <!-- Teams Grid -->
+    {% if teams %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {% for team in teams %}
-                <tr>
-                    <td>{{ team.name }}</td>
-                    <td>{{ team.captain.username }}</td>
-                    <td>
-                        {% for player in team.players.all %}
-                            {{ player.username }},
-                        {% endfor %}
-                    </td>
-                    <td>
-                        <a href="{% url 'team_detail' team.id %}">View</a>
-                        <a href="{% url 'edit_team' team.id %}">Edit</a>
-                        <a href="{% url 'delete_team' team.id %}">Delete</a>
-                    </td>
-                </tr>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    {% if team.logo %}
+                        <img src="{{ team.logo.url }}" alt="{{ team.name }}" class="h-48 w-full object-cover">
+                    {% else %}
+                        <div class="h-48 bg-primary-100 flex items-center justify-center">
+                            <i class="fas fa-users text-4xl text-primary-600"></i>
+                        </div>
+                    {% endif %}
+                    <div class="p-6">
+                        <h3 class="text-lg font-medium text-gray-900">
+                            <a href="{% url 'team-detail' pk=team.id %}" class="hover:text-primary-600">
+                                {{ team.name }}
+                            </a>
+                        </h3>
+                        <p class="mt-2 text-sm text-gray-600 line-clamp-2">{{ team.description }}</p>
+                        <div class="mt-4 flex items-center justify-between">
+                            <div class="flex items-center text-sm text-gray-500">
+                                <i class="fas fa-users mr-2"></i>
+                                {{ team.players.count }} players
+                            </div>
+                            <div class="flex items-center text-sm text-gray-500">
+                                <i class="fas fa-trophy mr-2"></i>
+                                {{ team.event.name }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             {% endfor %}
-        </tbody>
-    </table>
-    <a href="{% url 'create_team' %}">Create a new team</a>
+        </div>
+    {% else %}
+        <div class="text-center py-12">
+            <i class="fas fa-users text-4xl text-gray-400 mb-4"></i>
+            <p class="text-gray-600">No teams found.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Close modal when clicking outside
+document.addEventListener('click', function(event) {
+    const modal = document.getElementById('eventModal');
+    const modalContent = modal.querySelector('div');
+    if (event.target === modal) {
+        modal.classList.add('hidden');
+    }
+});
+</script>
 {% endblock %}

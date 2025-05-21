@@ -1,98 +1,200 @@
-{% extends "main.html" %}
+{% extends 'main.html' %}
 
 {% block content %}
-<!-- Hero Section -->
-<section class="hero-section d-flex align-items-center">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 text-center">
-                <h1 class="display-4 fw-bold mb-4">
-                    <span class="text-primary">NYC</span>
-                    <span class="text-secondary">Tapeball</span>
-                    <span class="d-block mt-3">Premier League</span>
-                </h1>
-                <p class="lead mb-5">Urban Cricket. Elite Competition.</p>
-                <a href="#events" class="btn btn-custom">
-                    View Tournaments
-                    <i class="bi bi-arrow-right ms-2"></i>
-                </a>
-            </div>
-        </div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Hero Section -->
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-bold text-gray-900 mb-4">Welcome to SportSpot</h1>
+        <p class="text-xl text-gray-600">Your premier destination for cricket tournament management</p>
     </div>
-</section>
 
-<!-- Events Section -->
-<section id="events" class="py-5 my-5">
-    <div class="container">
-        <h2 class="text-center mb-5 fw-bold">
-            <span class="text-primary me-2">01</span>
-            Current Battles
-        </h2>
+    <!-- Search Bar -->
+    <div class="max-w-2xl mx-auto mb-12">
+        <form method="GET" action="{% url 'home' %}" class="flex gap-4">
+            <div class="flex-1">
+                <input type="text" 
+                       name="q" 
+                       value="{{ search_query }}"
+                       placeholder="Search events, teams, or players..."
+                       class="block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+            </div>
+            <button type="submit"
+                    class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700">
+                <i class="fas fa-search mr-2"></i> Search
+            </button>
+        </form>
+    </div>
 
-        <div class="row g-4">
-            {% for event in events %}
-            <div class="col-md-6 col-lg-4">
-                <div class="card feature-card h-100 shadow-sm">
-                    <div class="card-body p-4">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <h3 class="mb-0">{{ event.name }}</h3>
-                            {% if event.draft_date == today|date:"Y-m-d" %}
-                            <span class="badge bg-danger">Live</span>
-                            {% endif %}
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left Column - Events -->
+        <div class="lg:col-span-2 space-y-8">
+            <!-- Upcoming Events -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-semibold text-gray-900">Upcoming Events</h2>
+                    <a href="{% url 'create-event' %}" 
+                       class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg text-sm font-medium text-white bg-primary-600 hover:bg-primary-700">
+                        <i class="fas fa-plus mr-2"></i> Create Event
+                    </a>
+                </div>
+
+                {% if upcoming_events %}
+                <div class="grid gap-6">
+                    {% for event in upcoming_events %}
+                    <div class="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
+                        {% if event.banner %}
+                            <img src="{{ event.banner.url }}" alt="{{ event.name }}" class="h-24 w-24 object-cover rounded-lg">
+                        {% else %}
+                            <div class="h-24 w-24 bg-primary-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-trophy text-2xl text-primary-600"></i>
+                            </div>
+                        {% endif %}
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-lg font-medium text-gray-900">
+                                <a href="{% url 'event' pk=event.id %}" class="hover:text-primary-600">
+                                    {{ event.name }}
+                                </a>
+                            </h3>
+                            <p class="mt-1 text-sm text-gray-500">{{ event.preview }}</p>
+                            <div class="mt-2 flex flex-wrap gap-4 text-sm text-gray-500">
+                                <span class="flex items-center">
+                                    <i class="fas fa-calendar-alt mr-1"></i>
+                                    {{ event.start_date|date:"M d, Y" }}
+                                </span>
+                                <span class="flex items-center">
+                                    <i class="fas fa-map-marker-alt mr-1"></i>
+                                    {{ event.location }}
+                                </span>
+                                {% if event.team_registration_deadline %}
+                                <span class="flex items-center text-primary-600">
+                                    <i class="fas fa-users-cog mr-1"></i>
+                                    Register by {{ event.team_registration_deadline|date:"M d, g:i a" }}
+                                </span>
+                                {% endif %}
+                            </div>
                         </div>
-
-                        <div class="event-meta">
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="bi bi-calendar me-2"></i>
-                                {{ event.start_date|date:"M j" }} - {{ event.end_date|date:"M j" }}
-                            </div>
-                            <div class="d-flex align-items-center mb-2">
-                                <i class="bi bi-geo-alt me-2"></i>
-                                {{ event.location }}
-                            </div>
-                            <div class="d-flex align-items-center mb-3">
-                                <i class="bi bi-people me-2"></i>
-                                {{ event.participants.all.count }} Teams
-                            </div>
-                        </div>
-
-                        <a href="{% url 'event' event.pk %}" class="btn btn-outline-primary w-100">
-                            Details <i class="bi bi-arrow-right-short"></i>
-                        </a>
                     </div>
+                    {% endfor %}
                 </div>
+                {% else %}
+                <p class="text-center text-gray-500 py-8">No upcoming events.</p>
+                {% endif %}
             </div>
-            {% empty %}
-            <div class="col-12 text-center py-5">
-                <div class="empty-state">
-                    <i class="bi bi-trophy fs-1 text-muted"></i>
-                    <p class="mt-3 text-muted">No active tournaments</p>
+
+            <!-- Ongoing Events -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Ongoing Events</h2>
+                {% if ongoing_events %}
+                <div class="grid gap-6">
+                    {% for event in ongoing_events %}
+                    <div class="flex items-start space-x-4 p-4 bg-gray-50 rounded-lg">
+                        {% if event.banner %}
+                            <img src="{{ event.banner.url }}" alt="{{ event.name }}" class="h-24 w-24 object-cover rounded-lg">
+                        {% else %}
+                            <div class="h-24 w-24 bg-primary-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-trophy text-2xl text-primary-600"></i>
+                            </div>
+                        {% endif %}
+                        <div class="flex-1 min-w-0">
+                            <h3 class="text-lg font-medium text-gray-900">
+                                <a href="{% url 'event' pk=event.id %}" class="hover:text-primary-600">
+                                    {{ event.name }}
+                                </a>
+                            </h3>
+                            <p class="mt-1 text-sm text-gray-500">{{ event.preview }}</p>
+                            <div class="mt-2 flex flex-wrap gap-4 text-sm text-gray-500">
+                                <span class="flex items-center">
+                                    <i class="fas fa-calendar-alt mr-1"></i>
+                                    Until {{ event.end_date|date:"M d, Y" }}
+                                </span>
+                                <span class="flex items-center">
+                                    <i class="fas fa-users mr-1"></i>
+                                    {{ event.teams.count }} teams
+                                </span>
+                                {% if event.draft_in_progress %}
+                                <span class="flex items-center text-primary-600">
+                                    <i class="fas fa-users-cog mr-1"></i>
+                                    Draft in Progress
+                                </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
                 </div>
+                {% else %}
+                <p class="text-center text-gray-500 py-8">No ongoing events.</p>
+                {% endif %}
             </div>
-            {% endfor %}
+        </div>
+
+        <!-- Right Column - Sidebar -->
+        <div class="space-y-8">
+            <!-- Upcoming Drafts -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Upcoming Drafts</h2>
+                {% if upcoming_events %}
+                <div class="space-y-4">
+                    {% for event in upcoming_events %}
+                        {% if event.draft_start_time and not event.draft_in_progress %}
+                        <div class="p-4 bg-gray-50 rounded-lg">
+                            <h3 class="font-medium text-gray-900">{{ event.name }}</h3>
+                            <div class="mt-2 space-y-2 text-sm">
+                                <p class="flex items-center text-gray-600">
+                                    <i class="fas fa-clock w-5"></i>
+                                    <span>Draft: {{ event.draft_start_time|date:"F j, Y, g:i a" }}</span>
+                                </p>
+                                <p class="flex items-center text-gray-600">
+                                    <i class="fas fa-users w-5"></i>
+                                    <span>Teams: {{ event.teams.count }}</span>
+                                </p>
+                                {% if event.player_registration_deadline %}
+                                <p class="flex items-center text-gray-600">
+                                    <i class="fas fa-user-plus w-5"></i>
+                                    <span>Register by: {{ event.player_registration_deadline|date:"F j, g:i a" }}</span>
+                                </p>
+                                {% endif %}
+                            </div>
+                            <a href="{% url 'event' pk=event.id %}" 
+                               class="mt-3 inline-flex items-center text-sm font-medium text-primary-600 hover:text-primary-700">
+                                View Details <i class="fas fa-arrow-right ml-1"></i>
+                            </a>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-center text-gray-500 py-8">No upcoming drafts.</p>
+                {% endif %}
+            </div>
+
+            <!-- Recent Matches -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-6">Recent Matches</h2>
+                {% if recent_matches %}
+                <div class="space-y-4">
+                    {% for match in recent_matches %}
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="font-medium text-gray-900">{{ match.team1.name }}</span>
+                            <span class="text-gray-600">vs</span>
+                            <span class="font-medium text-gray-900">{{ match.team2.name }}</span>
+                        </div>
+                        {% if match.winner %}
+                        <p class="mt-2 text-sm text-gray-600">
+                            Winner: <span class="font-medium">{{ match.winner.name }}</span>
+                        </p>
+                        {% endif %}
+                        <p class="mt-1 text-xs text-gray-500">{{ match.date|date:"F j, Y" }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-center text-gray-500 py-8">No recent matches.</p>
+                {% endif %}
+            </div>
         </div>
     </div>
-</section>
-
-<!-- CTA Section -->
-<section class="bg-dark text-white py-5">
-    <div class="container text-center">
-        <h2 class="mb-4">Ready to Lead Your Team?</h2>
-        <div class="d-flex justify-content-center gap-3">
-            {% if user.is_authenticated %}
-            <a href="{% url 'account' %}" class="btn btn-custom">
-                Manage Squad <i class="bi bi-person-gear ms-2"></i>
-            </a>
-            {% else %}
-            <a href="{% url 'register' %}" class="btn btn-custom">
-                Create Account <i class="bi bi-person-plus ms-2"></i>
-            </a>
-            <a href="{% url 'login' %}" class="btn btn-outline-light">
-                Sign In <i class="bi bi-box-arrow-in-right ms-2"></i>
-            </a>
-            {% endif %}
-        </div>
-    </div>
-</section>
-
+</div>
 {% endblock %}
