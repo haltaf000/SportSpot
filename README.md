@@ -3,6 +3,10 @@
 SportSpot is a Django-based web application designed to manage sporting events in the NYC metropolitan area. It enables users to browse events, sign up for participation, and engage in features like live drafts and tournament management.
 
 ---
+## Link
+https://sportspot.onrender.com/
+
+---
 
 ## Table of Contents
 
